@@ -1,201 +1,8 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dinâmica Shopee – Comunicação com Cliente</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --orange: #EE4D2D;
-    --orange-light: #FF6B4A;
-    --orange-dark: #C73B1E;
-    --cream: #FFF8F5;
-    --dark: #1A0A06;
-    --mid: #5C2E1A;
-    --text: #2D1206;
-    --gray: #F0EAE7;
-    --correct: #2ECC71;
-    --wrong: #E74C3C;
-    --neutral: #F39C12;
-    --card-bg: #FFFFFF;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(circle at 10% 20%, rgba(238,77,45,0.07) 0%, transparent 50%),
-      radial-gradient(circle at 90% 80%, rgba(238,77,45,0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .wrapper { position: relative; z-index: 1; }
-
-  header {
-    background: var(--orange);
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 24px rgba(238,77,45,0.3);
-  }
-
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.6rem;
-    color: #fff;
-    letter-spacing: -0.5px;
-  }
-
-  .logo span { opacity: 0.6; font-weight: 400; }
-
-  .score-bar { display: flex; gap: 20px; align-items: center; }
-
-  .score-pill {
-    background: rgba(255,255,255,0.2);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 100px;
-    padding: 6px 16px;
-    color: #fff;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-
-  .score-pill strong { font-family: 'Syne', sans-serif; font-size: 1rem; }
-
-  main {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 40px 20px 80px;
-  }
-
-  /* ===== INTRO ===== */
-  #screen-intro { text-align: center; }
-
-  .intro-badge {
-    display: inline-block;
-    background: var(--orange);
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 6px 14px;
-    border-radius: 100px;
-    margin-bottom: 24px;
-  }
-
-  .intro-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(2rem, 5vw, 3.2rem);
-    font-weight: 800;
-    line-height: 1.1;
-    color: var(--dark);
-    margin-bottom: 16px;
-  }
-
-  .intro-title em { color: var(--orange); font-style: normal; }
-
-  .intro-sub {
-    font-size: 1.1rem;
-    color: var(--mid);
-    max-width: 560px;
-    margin: 0 auto 40px;
-    line-height: 1.7;
-  }
-
-  .topics-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    max-width: 540px;
-    margin: 0 auto 44px;
-  }
-
-  .topic-card {
-    background: var(--card-bg);
-    border: 1.5px solid rgba(238,77,45,0.15);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: left;
-    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-    position: relative;
-  }
-
-  .topic-card:hover {
-    transform: translateY(-3px);
-    border-color: var(--orange);
-    box-shadow: 0 8px 24px rgba(238,77,45,0.12);
-  }
-
-  /* ADS card glow */
-  .topic-card.ads-card {
-    border-color: rgba(238,77,45,0.35);
-    background: linear-gradient(135deg, #fff 70%, #FFF2EF);
-  }
-
-  .topic-card.ads-card:hover {
-    border-color: var(--orange);
-    box-shadow: 0 8px 32px rgba(238,77,45,0.22);
-  }
-
-  .ads-badge {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: var(--orange);
-    color: #fff;
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 100px;
-  }
-
-  .topic-icon { font-size: 1.8rem; margin-bottom: 8px; }
-  .topic-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--dark); }
-  .topic-count { font-size: 0.78rem; color: var(--mid); margin-top: 2px; }
-
-  .btn-primary {
-    background: var(--orange);
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    padding: 16px 44px;
-    font-family: 'Syne', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(238,77,45,0.35);
-  }
-
-  .btn-primary:hover {
-    background: var(--orange-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(238,77,45,0.4);
-  }
 
   .btn-primary:active { transform: translateY(0); }
 
-  /* ===== ADS MODAL OVERLAY ===== */
-  #ads-modal-overlay {
+  /* ===== MODAL OVERLAY (shared) ===== */
+  .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
@@ -207,7 +14,7 @@
     backdrop-filter: blur(4px);
   }
 
-  #ads-modal-overlay.open {
+  .modal-overlay.open {
     display: flex;
     animation: overlayIn 0.25s ease;
   }
@@ -217,11 +24,11 @@
     to { opacity: 1; }
   }
 
-  .ads-modal {
+  .quiz-modal {
     background: var(--card-bg);
     border-radius: 24px;
     width: 100%;
-    max-width: 620px;
+    max-width: 640px;
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 24px 80px rgba(0,0,0,0.25);
@@ -234,6 +41,81 @@
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
 
+  /* ===== MODAL START SCREEN ===== */
+  .modal-start-screen {
+    text-align: center;
+    padding: 40px 32px 36px;
+  }
+
+  .modal-start-icon { font-size: 3.5rem; margin-bottom: 16px; }
+
+  .modal-start-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+
+  .modal-start-desc {
+    font-size: 0.95rem;
+    color: var(--mid);
+    line-height: 1.7;
+    max-width: 460px;
+    margin: 0 auto 24px;
+  }
+
+  .profile-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .profile-tag {
+    background: var(--gray);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--mid);
+  }
+
+  .modal-start-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-start-quiz {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 13px 32px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 16px rgba(238,77,45,0.3);
+  }
+
+  .btn-start-quiz:hover { background: var(--orange-dark); transform: translateY(-1px); }
+
+  .btn-cancel-modal {
+    background: transparent;
+    color: var(--mid);
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 12px;
+    padding: 13px 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-cancel-modal:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* ===== MODAL HEADER ===== */
   .modal-header {
     background: var(--orange);
     padding: 24px 28px 20px;
@@ -284,57 +166,71 @@
 
   .modal-subtitle { font-size: 0.88rem; color: rgba(255,255,255,0.8); }
 
-  /* ADS progress */
-  .ads-progress-row {
+  /* ===== QUIZ PROGRESS ===== */
+  .q-progress-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 16px 28px 8px;
   }
 
-  .ads-prog-label { font-size: 0.82rem; color: var(--mid); font-weight: 500; }
+  .q-prog-label { font-size: 0.82rem; color: var(--mid); font-weight: 500; }
 
-  .ads-score-pills { display: flex; gap: 8px; }
+  .q-score-pills { display: flex; gap: 8px; }
 
-  .ads-pill {
+  .q-pill {
     font-size: 0.78rem;
     font-weight: 600;
     padding: 4px 12px;
     border-radius: 100px;
   }
 
-  .ads-pill.c { background: #EAFAF1; color: #1A7A4A; }
-  .ads-pill.e { background: #FDEDEC; color: #A93226; }
+  .q-pill.c { background: #EAFAF1; color: #1A7A4A; }
+  .q-pill.e { background: #FDEDEC; color: #A93226; }
 
-  .ads-prog-bar-wrap { padding: 0 28px 16px; }
+  .q-prog-bar-wrap { padding: 0 28px 16px; }
 
-  .ads-prog-bar {
+  .q-prog-bar {
     height: 5px;
     background: rgba(238,77,45,0.12);
     border-radius: 100px;
     overflow: hidden;
   }
 
-  .ads-prog-fill {
+  .q-prog-fill {
     height: 100%;
     background: var(--orange);
     border-radius: 100px;
     transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
   }
 
-  /* ADS question body */
-  .ads-body { padding: 0 28px 28px; }
+  /* ===== QUIZ BODY ===== */
+  .q-body { padding: 0 28px 28px; }
 
-  .ads-q-scenario {
+  .q-profile-tag {
+    display: inline-block;
+    background: rgba(238,77,45,0.1);
+    color: var(--orange);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 100px;
+    margin-bottom: 6px;
+  }
+
+  .q-scenario {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--orange);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 8px;
+    margin-top: 4px;
   }
 
-  .ads-q-text {
+  .q-text {
     font-family: 'Syne', sans-serif;
     font-size: 1.05rem;
     font-weight: 700;
@@ -343,7 +239,7 @@
     margin-bottom: 10px;
   }
 
-  .ads-q-context {
+  .q-context {
     font-size: 0.85rem;
     color: var(--mid);
     line-height: 1.6;
@@ -355,9 +251,9 @@
     margin-bottom: 18px;
   }
 
-  .ads-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .q-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
 
-  .ads-opt-btn {
+  .opt-btn {
     background: var(--card-bg);
     border: 1.5px solid rgba(0,0,0,0.1);
     border-radius: 12px;
@@ -375,13 +271,13 @@
     width: 100%;
   }
 
-  .ads-opt-btn:hover:not(:disabled) {
+  .opt-btn:hover:not(:disabled) {
     border-color: var(--orange);
     background: #FFF2EF;
     transform: translateX(3px);
   }
 
-  .ads-opt-letter {
+  .opt-letter {
     width: 26px;
     height: 26px;
     min-width: 26px;
@@ -397,14 +293,14 @@
     transition: all 0.2s;
   }
 
-  .ads-opt-btn.correct { background: #EAFAF1; border-color: var(--correct); }
-  .ads-opt-btn.correct .ads-opt-letter { background: var(--correct); color: #fff; }
-  .ads-opt-btn.wrong { background: #FDEDEC; border-color: var(--wrong); }
-  .ads-opt-btn.wrong .ads-opt-letter { background: var(--wrong); color: #fff; }
-  .ads-opt-btn:disabled { cursor: default; }
+  .opt-btn.correct { background: #EAFAF1; border-color: var(--correct); }
+  .opt-btn.correct .opt-letter { background: var(--correct); color: #fff; }
+  .opt-btn.wrong { background: #FDEDEC; border-color: var(--wrong); }
+  .opt-btn.wrong .opt-letter { background: var(--wrong); color: #fff; }
+  .opt-btn:disabled { cursor: default; }
 
-  /* Feedback dentro do modal */
-  .ads-feedback {
+  /* Feedback */
+  .q-feedback {
     border-radius: 12px;
     padding: 16px 18px;
     margin-bottom: 14px;
@@ -417,26 +313,25 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .ads-feedback.show { display: block; }
+  .q-feedback.show { display: block; }
+  .q-feedback.fb-correct { background: #EAFAF1; border: 1.5px solid var(--correct); }
+  .q-feedback.fb-wrong { background: #FDEDEC; border: 1.5px solid var(--wrong); }
 
-  .ads-feedback.fb-correct { background: #EAFAF1; border: 1.5px solid var(--correct); }
-  .ads-feedback.fb-wrong { background: #FDEDEC; border: 1.5px solid var(--wrong); }
-
-  .ads-fb-title {
+  .q-fb-title {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
     font-size: 0.95rem;
     margin-bottom: 5px;
   }
 
-  .ads-feedback.fb-correct .ads-fb-title { color: #1A7A4A; }
-  .ads-feedback.fb-wrong .ads-fb-title { color: #A93226; }
+  .q-feedback.fb-correct .q-fb-title { color: #1A7A4A; }
+  .q-feedback.fb-wrong .q-fb-title { color: #A93226; }
 
-  .ads-fb-text { font-size: 0.87rem; line-height: 1.6; }
-  .ads-feedback.fb-correct .ads-fb-text { color: #1D6A47; }
-  .ads-feedback.fb-wrong .ads-fb-text { color: #922B21; }
+  .q-fb-text { font-size: 0.87rem; line-height: 1.6; }
+  .q-feedback.fb-correct .q-fb-text { color: #1D6A47; }
+  .q-feedback.fb-wrong .q-fb-text { color: #922B21; }
 
-  .ads-tip {
+  .q-tip {
     background: #FFF8EC;
     border: 1.5px solid var(--neutral);
     border-radius: 12px;
@@ -446,9 +341,9 @@
     animation: fadeUp 0.28s ease 0.1s both;
   }
 
-  .ads-tip.show { display: block; }
+  .q-tip.show { display: block; }
 
-  .ads-tip-label {
+  .q-tip-label {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
     font-size: 0.75rem;
@@ -458,14 +353,11 @@
     margin-bottom: 5px;
   }
 
-  .ads-tip-text { font-size: 0.85rem; color: #7D5A0A; line-height: 1.6; }
+  .q-tip-text { font-size: 0.85rem; color: #7D5A0A; line-height: 1.6; }
 
-  .ads-nav {
-    display: flex;
-    justify-content: flex-end;
-  }
+  .q-nav { display: flex; justify-content: flex-end; }
 
-  .ads-btn-next {
+  .btn-next-q {
     background: var(--orange);
     color: #fff;
     border: none;
@@ -479,22 +371,22 @@
     transition: background 0.2s, transform 0.15s;
   }
 
-  .ads-btn-next:hover { background: var(--orange-dark); transform: translateY(-1px); }
-  .ads-btn-next.show { display: block; }
+  .btn-next-q:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .btn-next-q.show { display: block; }
 
-  /* ADS Result screen dentro do modal */
-  .ads-result {
+  /* Result screen */
+  .q-result {
     display: none;
     text-align: center;
     padding: 28px 28px 32px;
     animation: fadeUp 0.3s ease;
   }
 
-  .ads-result.show { display: block; }
+  .q-result.show { display: block; }
 
-  .ads-res-emoji { font-size: 4rem; margin-bottom: 12px; }
+  .q-res-emoji { font-size: 4rem; margin-bottom: 12px; }
 
-  .ads-res-title {
+  .q-res-title {
     font-family: 'Syne', sans-serif;
     font-size: 1.5rem;
     font-weight: 800;
@@ -502,9 +394,9 @@
     margin-bottom: 6px;
   }
 
-  .ads-res-sub { font-size: 0.92rem; color: var(--mid); margin-bottom: 20px; line-height: 1.6; }
+  .q-res-sub { font-size: 0.92rem; color: var(--mid); margin-bottom: 20px; line-height: 1.6; }
 
-  .ads-res-pct {
+  .q-res-pct {
     font-family: 'Syne', sans-serif;
     font-size: 3.5rem;
     font-weight: 800;
@@ -513,29 +405,29 @@
     margin-bottom: 4px;
   }
 
-  .ads-res-pct-label { font-size: 0.85rem; color: var(--mid); margin-bottom: 24px; }
+  .q-res-pct-label { font-size: 0.85rem; color: var(--mid); margin-bottom: 24px; }
 
-  .ads-breakdown {
+  .q-breakdown {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     margin-bottom: 24px;
   }
 
-  .ads-bk-item {
+  .q-bk-item {
     background: var(--gray);
     border-radius: 12px;
     padding: 14px;
     text-align: left;
   }
 
-  .ads-bk-icon { font-size: 1.2rem; margin-bottom: 4px; }
-  .ads-bk-label { font-size: 0.72rem; color: var(--mid); margin-bottom: 2px; }
-  .ads-bk-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--dark); }
+  .q-bk-icon { font-size: 1.2rem; margin-bottom: 4px; }
+  .q-bk-label { font-size: 0.72rem; color: var(--mid); margin-bottom: 2px; }
+  .q-bk-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--dark); }
 
-  .ads-res-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .q-res-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
 
-  .ads-btn-again {
+  .btn-again {
     background: var(--orange);
     color: #fff;
     border: none;
@@ -549,9 +441,9 @@
     box-shadow: 0 4px 16px rgba(238,77,45,0.3);
   }
 
-  .ads-btn-again:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .btn-again:hover { background: var(--orange-dark); transform: translateY(-1px); }
 
-  .ads-btn-close {
+  .btn-close-res {
     background: transparent;
     color: var(--mid);
     border: 1.5px solid rgba(0,0,0,0.12);
@@ -564,277 +456,17 @@
     transition: border-color 0.2s, color 0.2s;
   }
 
-  .ads-btn-close:hover { border-color: var(--orange); color: var(--orange); }
-
-  /* ===== QUESTION SCREEN (quiz geral) ===== */
-  #screen-question { display: none; }
-
-  .progress-wrap { margin-bottom: 32px; }
-
-  .progress-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .progress-label { font-size: 0.82rem; font-weight: 500; color: var(--mid); letter-spacing: 0.5px; }
-
-  .topic-tag {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 100px;
-    background: var(--orange);
-    color: #fff;
-    letter-spacing: 0.5px;
-  }
-
-  .progress-bar {
-    height: 6px;
-    background: rgba(238,77,45,0.15);
-    border-radius: 100px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--orange);
-    border-radius: 100px;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .q-card {
-    background: var(--card-bg);
-    border-radius: 24px;
-    padding: 36px 36px 28px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-    border: 1.5px solid rgba(238,77,45,0.08);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .q-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: var(--orange);
-  }
-
-  .q-scenario {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--orange);
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 10px;
-  }
-
-  .q-text {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.05rem, 2.5vw, 1.3rem);
-    font-weight: 700;
-    line-height: 1.45;
-    color: var(--dark);
-    margin-bottom: 6px;
-  }
-
-  .q-context {
-    font-size: 0.9rem;
-    color: var(--mid);
-    line-height: 1.6;
-    margin-top: 8px;
-    padding: 12px 16px;
-    background: var(--gray);
-    border-radius: 10px;
-    border-left: 3px solid var(--orange);
-    font-style: italic;
-  }
-
-  .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-
-  .option-btn {
-    background: var(--card-bg);
-    border: 1.5px solid rgba(0,0,0,0.1);
-    border-radius: 14px;
-    padding: 16px 20px;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.95rem;
-    color: var(--text);
-    line-height: 1.5;
-  }
-
-  .option-btn:hover:not(:disabled) {
-    border-color: var(--orange);
-    background: #FFF2EF;
-    transform: translateX(4px);
-  }
-
-  .option-letter {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    border-radius: 8px;
-    background: var(--gray);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.82rem;
-    color: var(--mid);
-    transition: all 0.2s;
-  }
-
-  .option-btn.correct { background: #EAFAF1; border-color: var(--correct); }
-  .option-btn.correct .option-letter { background: var(--correct); color: #fff; }
-  .option-btn.wrong { background: #FDEDEC; border-color: var(--wrong); }
-  .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; }
-  .option-btn:disabled { cursor: default; }
-
-  .feedback-box {
-    border-radius: 14px;
-    padding: 20px 22px;
-    margin-bottom: 20px;
-    display: none;
-    animation: fadeUp 0.3s ease;
-  }
-
-  .feedback-box.show { display: block; }
-  .feedback-box.correct-fb { background: #EAFAF1; border: 1.5px solid var(--correct); }
-  .feedback-box.wrong-fb { background: #FDEDEC; border: 1.5px solid var(--wrong); }
-
-  .feedback-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
-  .feedback-box.correct-fb .feedback-title { color: #1A7A4A; }
-  .feedback-box.wrong-fb .feedback-title { color: #A93226; }
-
-  .feedback-text { font-size: 0.9rem; line-height: 1.6; }
-  .feedback-box.correct-fb .feedback-text { color: #1D6A47; }
-  .feedback-box.wrong-fb .feedback-text { color: #922B21; }
-
-  .tip-box {
-    background: #FFF8EC;
-    border: 1.5px solid var(--neutral);
-    border-radius: 14px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
-    display: none;
-    animation: fadeUp 0.3s ease 0.1s both;
-  }
-
-  .tip-box.show { display: block; }
-
-  .tip-label {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.8rem;
-    color: #B7770D;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 6px;
-  }
-
-  .tip-text { font-size: 0.88rem; color: #7D5A0A; line-height: 1.6; }
-
-  .nav-row { display: flex; justify-content: flex-end; gap: 12px; }
-
-  .btn-next {
-    background: var(--orange);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    padding: 12px 32px;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 0.95rem;
-    cursor: pointer;
-    display: none;
-    transition: background 0.2s, transform 0.15s;
-  }
-
-  .btn-next:hover { background: var(--orange-dark); transform: translateY(-1px); }
-  .btn-next.show { display: block; }
-
-  /* ===== RESULT GERAL ===== */
-  #screen-result { display: none; text-align: center; }
-
-  .result-emoji { font-size: 5rem; margin-bottom: 16px; }
-
-  .result-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--dark);
-    margin-bottom: 8px;
-  }
-
-  .result-sub { font-size: 1rem; color: var(--mid); margin-bottom: 32px; }
-
-  .result-score-big {
-    font-family: 'Syne', sans-serif;
-    font-size: 4rem;
-    font-weight: 800;
-    color: var(--orange);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .result-score-label { font-size: 0.9rem; color: var(--mid); margin-bottom: 32px; }
-
-  .breakdown {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
-    max-width: 500px;
-    margin: 0 auto 40px;
-  }
-
-  .breakdown-item {
-    background: var(--card-bg);
-    border: 1.5px solid rgba(0,0,0,0.08);
-    border-radius: 16px;
-    padding: 18px;
-    text-align: left;
-  }
-
-  .breakdown-icon { font-size: 1.4rem; margin-bottom: 6px; }
-  .breakdown-label { font-size: 0.75rem; color: var(--mid); margin-bottom: 2px; }
-  .breakdown-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--dark); }
-
-  .btn-restart {
-    background: var(--orange);
-    color: #fff;
-    border: none;
-    border-radius: 14px;
-    padding: 14px 40px;
-    font-family: 'Syne', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.15s;
-    box-shadow: 0 4px 20px rgba(238,77,45,0.3);
-  }
-
-  .btn-restart:hover { background: var(--orange-dark); transform: translateY(-2px); }
+  .btn-close-res:hover { border-color: var(--orange); color: var(--orange); }
 
   @media (max-width: 600px) {
     .topics-grid { grid-template-columns: 1fr; }
-    .breakdown { grid-template-columns: 1fr; }
-    .ads-breakdown { grid-template-columns: 1fr; }
-    .q-card { padding: 24px 20px; }
+    .q-breakdown { grid-template-columns: 1fr; }
     header { padding: 16px 20px; }
-    .ads-modal { border-radius: 20px; }
+    .quiz-modal { border-radius: 20px; }
     .modal-header { border-radius: 20px 20px 0 0; padding: 20px 22px 16px; }
-    .ads-body { padding: 0 18px 22px; }
-    .ads-result { padding: 20px 18px 24px; }
+    .q-body { padding: 0 18px 22px; }
+    .q-result { padding: 20px 18px 24px; }
+    .modal-start-screen { padding: 28px 20px; }
   }
 </style>
 </head>
@@ -844,573 +476,1184 @@
 <header>
   <div class="logo">shopee <span>| treinamento</span></div>
   <div class="score-bar">
-    <div class="score-pill">✅ <strong id="hdr-correct">0</strong> corretas</div>
-    <div class="score-pill">❌ <strong id="hdr-wrong">0</strong> erradas</div>
+    <div class="score-pill">🎯 Dinâmica em Grupo</div>
   </div>
 </header>
 
 <main>
-
-  <!-- INTRO -->
   <div id="screen-intro">
     <div class="intro-badge">🎯 Dinâmica de Treinamento</div>
     <h1 class="intro-title">Comunicação<br>com o Cliente <em>Shopee</em></h1>
-    <p class="intro-sub">Responda perguntas inesperadas que simulam situações reais de atendimento. Aprenda a comunicar com clareza, empatia e precisão!</p>
+    <p class="intro-sub">Clique em um tema para iniciar o quiz. Cada dinâmica tem 12 perguntas com perfis variados de cliente: ansioso, estressado, técnico e leigo.</p>
 
     <div class="topics-grid">
-      <div class="topic-card ads-card" onclick="openAdsQuiz()">
-        <div class="ads-badge">Quiz ativo</div>
+      <div class="topic-card active-card" onclick="openModal('ads')">
+        <div class="active-badge">Quiz ativo</div>
         <div class="topic-icon">📢</div>
         <div class="topic-name">ADS</div>
         <div class="topic-count">Anúncios & Impulsionamento</div>
       </div>
-      <div class="topic-card">
+      <div class="topic-card active-card" onclick="openModal('preco')">
+        <div class="active-badge">Quiz ativo</div>
         <div class="topic-icon">💰</div>
         <div class="topic-name">Precificação</div>
         <div class="topic-count">Estratégia de preços</div>
       </div>
-      <div class="topic-card">
+      <div class="topic-card active-card" onclick="openModal('marketing')">
+        <div class="active-badge">Quiz ativo</div>
         <div class="topic-icon">📣</div>
         <div class="topic-name">Central de Marketing</div>
         <div class="topic-count">Vouchers, campanhas & mais</div>
       </div>
-      <div class="topic-card">
+      <div class="topic-card active-card" onclick="openModal('afiliados')">
+        <div class="active-badge">Quiz ativo</div>
         <div class="topic-icon">🤝</div>
         <div class="topic-name">Afiliados</div>
         <div class="topic-count">Programa de parceiros</div>
       </div>
     </div>
-
-    <button class="btn-primary" onclick="startGame()">Iniciar Dinâmica Completa 🚀</button>
   </div>
-
-  <!-- QUESTION (quiz geral) -->
-  <div id="screen-question">
-    <div class="progress-wrap">
-      <div class="progress-top">
-        <span class="progress-label" id="progress-label">Pergunta 1 de 12</span>
-        <span class="topic-tag" id="topic-tag">ADS</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-      </div>
-    </div>
-
-    <div class="q-card">
-      <div class="q-scenario" id="q-scenario"></div>
-      <div class="q-text" id="q-text"></div>
-      <div class="q-context" id="q-context"></div>
-    </div>
-
-    <div class="options-grid" id="options-grid"></div>
-
-    <div class="feedback-box" id="feedback-box">
-      <div class="feedback-title" id="feedback-title"></div>
-      <div class="feedback-text" id="feedback-text"></div>
-    </div>
-
-    <div class="tip-box" id="tip-box">
-      <div class="tip-label">💡 Dica de Comunicação</div>
-      <div class="tip-text" id="tip-text"></div>
-    </div>
-
-    <div class="nav-row">
-      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima →</button>
-    </div>
-  </div>
-
-  <!-- RESULT GERAL -->
-  <div id="screen-result">
-    <div class="result-emoji" id="result-emoji">🏆</div>
-    <div class="result-title" id="result-title">Excelente!</div>
-    <div class="result-sub" id="result-sub">Você concluiu a dinâmica!</div>
-    <div class="result-score-big" id="result-score">0%</div>
-    <div class="result-score-label">de aproveitamento</div>
-
-    <div class="breakdown">
-      <div class="breakdown-item">
-        <div class="breakdown-icon">✅</div>
-        <div class="breakdown-label">Corretas</div>
-        <div class="breakdown-val" id="res-correct">0</div>
-      </div>
-      <div class="breakdown-item">
-        <div class="breakdown-icon">❌</div>
-        <div class="breakdown-label">Erradas</div>
-        <div class="breakdown-val" id="res-wrong">0</div>
-      </div>
-      <div class="breakdown-item">
-        <div class="breakdown-icon">📊</div>
-        <div class="breakdown-label">Total de perguntas</div>
-        <div class="breakdown-val" id="res-total">0</div>
-      </div>
-      <div class="breakdown-item">
-        <div class="breakdown-icon">⭐</div>
-        <div class="breakdown-label">Nível alcançado</div>
-        <div class="breakdown-val" id="res-level">-</div>
-      </div>
-    </div>
-
-    <button class="btn-restart" onclick="restartGame()">🔄 Jogar Novamente</button>
-  </div>
-
 </main>
 </div>
 
-<!-- ===== ADS MODAL ===== -->
-<div id="ads-modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="ads-modal" id="ads-modal">
-
-    <div class="modal-header">
-      <button class="modal-close" onclick="closeAdsQuiz()">✕</button>
-      <div class="modal-tag">📢 Quiz ADS</div>
-      <div class="modal-title">Anúncios & Impulsionamento</div>
-      <div class="modal-subtitle">Teste seus conhecimentos sobre ADS na Shopee</div>
-    </div>
-
-    <!-- progress -->
-    <div id="ads-quiz-area">
-      <div class="ads-progress-row">
-        <span class="ads-prog-label" id="ads-prog-label">Pergunta 1 de 8</span>
-        <div class="ads-score-pills">
-          <span class="ads-pill c">✅ <span id="ads-correct-count">0</span></span>
-          <span class="ads-pill e">❌ <span id="ads-wrong-count">0</span></span>
-        </div>
+<!-- ============================================================ -->
+<!-- ADS MODAL -->
+<!-- ============================================================ -->
+<div id="modal-ads" class="modal-overlay" onclick="handleOverlay(event,'ads')">
+  <div class="quiz-modal" id="quizbox-ads">
+    <div id="start-ads" class="modal-start-screen">
+      <div class="modal-start-icon">📢</div>
+      <div class="modal-start-title">Quiz — ADS</div>
+      <div class="modal-start-desc">12 perguntas sobre Anúncios & Impulsionamento na Shopee. Perfis de cliente variados para simular situações reais de atendimento.</div>
+      <div class="profile-tags">
+        <span class="profile-tag">😰 Ansioso</span>
+        <span class="profile-tag">😤 Estressado</span>
+        <span class="profile-tag">🔧 Técnico</span>
+        <span class="profile-tag">🙋 Leigo</span>
       </div>
-      <div class="ads-prog-bar-wrap">
-        <div class="ads-prog-bar">
-          <div class="ads-prog-fill" id="ads-prog-fill" style="width:0%"></div>
-        </div>
-      </div>
-
-      <div class="ads-body">
-        <div class="ads-q-scenario" id="ads-scenario"></div>
-        <div class="ads-q-text" id="ads-q-text"></div>
-        <div class="ads-q-context" id="ads-q-context"></div>
-
-        <div class="ads-options" id="ads-options"></div>
-
-        <div class="ads-feedback" id="ads-feedback">
-          <div class="ads-fb-title" id="ads-fb-title"></div>
-          <div class="ads-fb-text" id="ads-fb-text"></div>
-        </div>
-
-        <div class="ads-tip" id="ads-tip">
-          <div class="ads-tip-label">💡 Dica de Comunicação</div>
-          <div class="ads-tip-text" id="ads-tip-text"></div>
-        </div>
-
-        <div class="ads-nav">
-          <button class="ads-btn-next" id="ads-btn-next" onclick="adsNextQuestion()">Próxima →</button>
-        </div>
+      <div class="modal-start-btns">
+        <button class="btn-start-quiz" onclick="startQuiz('ads')">Iniciar Quiz 🚀</button>
+        <button class="btn-cancel-modal" onclick="closeModal('ads')">Fechar</button>
       </div>
     </div>
-
-    <!-- ADS Result -->
-    <div class="ads-result" id="ads-result">
-      <div class="ads-res-emoji" id="ads-res-emoji">🏆</div>
-      <div class="ads-res-title" id="ads-res-title">Excelente!</div>
-      <div class="ads-res-sub" id="ads-res-sub">Você domina ADS na Shopee!</div>
-      <div class="ads-res-pct" id="ads-res-pct">0%</div>
-      <div class="ads-res-pct-label">de aproveitamento no quiz de ADS</div>
-      <div class="ads-breakdown">
-        <div class="ads-bk-item">
-          <div class="ads-bk-icon">✅</div>
-          <div class="ads-bk-label">Corretas</div>
-          <div class="ads-bk-val" id="ads-res-c">0</div>
-        </div>
-        <div class="ads-bk-item">
-          <div class="ads-bk-icon">❌</div>
-          <div class="ads-bk-label">Erradas</div>
-          <div class="ads-bk-val" id="ads-res-e">0</div>
-        </div>
-        <div class="ads-bk-item">
-          <div class="ads-bk-icon">📊</div>
-          <div class="ads-bk-label">Total</div>
-          <div class="ads-bk-val" id="ads-res-t">0</div>
-        </div>
-        <div class="ads-bk-item">
-          <div class="ads-bk-icon">⭐</div>
-          <div class="ads-bk-label">Nível</div>
-          <div class="ads-bk-val" id="ads-res-lvl">-</div>
+    <div id="quiz-ads" style="display:none">
+      <div class="modal-header">
+        <button class="modal-close" onclick="closeModal('ads')">✕</button>
+        <div class="modal-tag">📢 ADS</div>
+        <div class="modal-title">Anúncios & Impulsionamento</div>
+        <div class="modal-subtitle">Teste seus conhecimentos sobre ADS na Shopee</div>
+      </div>
+      <div class="q-progress-row">
+        <span class="q-prog-label" id="prog-label-ads">Pergunta 1 de 12</span>
+        <div class="q-score-pills">
+          <span class="q-pill c">✅ <span id="correct-ads">0</span></span>
+          <span class="q-pill e">❌ <span id="wrong-ads">0</span></span>
         </div>
       </div>
-      <div class="ads-res-btns">
-        <button class="ads-btn-again" onclick="restartAdsQuiz()">🔄 Tentar novamente</button>
-        <button class="ads-btn-close" onclick="closeAdsQuiz()">Fechar</button>
+      <div class="q-prog-bar-wrap">
+        <div class="q-prog-bar"><div class="q-prog-fill" id="fill-ads" style="width:0%"></div></div>
+      </div>
+      <div class="q-body">
+        <div class="q-profile-tag" id="profile-ads"></div>
+        <div class="q-scenario" id="scenario-ads"></div>
+        <div class="q-text" id="qtext-ads"></div>
+        <div class="q-context" id="qctx-ads"></div>
+        <div class="q-options" id="opts-ads"></div>
+        <div class="q-feedback" id="fb-ads"><div class="q-fb-title" id="fb-title-ads"></div><div class="q-fb-text" id="fb-text-ads"></div></div>
+        <div class="q-tip" id="tip-ads"><div class="q-tip-label">💡 Dica de Comunicação</div><div class="q-tip-text" id="tip-text-ads"></div></div>
+        <div class="q-nav"><button class="btn-next-q" id="next-ads" onclick="nextQ('ads')">Próxima →</button></div>
       </div>
     </div>
+    <div id="result-ads" class="q-result">
+      <div class="q-res-emoji" id="res-emoji-ads">🏆</div>
+      <div class="q-res-title" id="res-title-ads"></div>
+      <div class="q-res-sub" id="res-sub-ads"></div>
+      <div class="q-res-pct" id="res-pct-ads">0%</div>
+      <div class="q-res-pct-label">de aproveitamento</div>
+      <div class="q-breakdown">
+        <div class="q-bk-item"><div class="q-bk-icon">✅</div><div class="q-bk-label">Corretas</div><div class="q-bk-val" id="res-c-ads">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">❌</div><div class="q-bk-label">Erradas</div><div class="q-bk-val" id="res-e-ads">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">📊</div><div class="q-bk-label">Total</div><div class="q-bk-val" id="res-t-ads">12</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">⭐</div><div class="q-bk-label">Nível</div><div class="q-bk-val" id="res-lvl-ads">-</div></div>
+      </div>
+      <div class="q-res-btns">
+        <button class="btn-again" onclick="startQuiz('ads')">🔄 Tentar novamente</button>
+        <button class="btn-close-res" onclick="closeModal('ads')">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
+<!-- ============================================================ -->
+<!-- PRECIFICAÇÃO MODAL -->
+<!-- ============================================================ -->
+<div id="modal-preco" class="modal-overlay" onclick="handleOverlay(event,'preco')">
+  <div class="quiz-modal" id="quizbox-preco">
+    <div id="start-preco" class="modal-start-screen">
+      <div class="modal-start-icon">💰</div>
+      <div class="modal-start-title">Quiz — Precificação</div>
+      <div class="modal-start-desc">12 perguntas sobre estratégia de preços na Shopee. Situações reais com diferentes perfis de lojistas.</div>
+      <div class="profile-tags">
+        <span class="profile-tag">😰 Ansioso</span>
+        <span class="profile-tag">😤 Estressado</span>
+        <span class="profile-tag">🔧 Técnico</span>
+        <span class="profile-tag">🙋 Leigo</span>
+      </div>
+      <div class="modal-start-btns">
+        <button class="btn-start-quiz" onclick="startQuiz('preco')">Iniciar Quiz 🚀</button>
+        <button class="btn-cancel-modal" onclick="closeModal('preco')">Fechar</button>
+      </div>
+    </div>
+    <div id="quiz-preco" style="display:none">
+      <div class="modal-header">
+        <button class="modal-close" onclick="closeModal('preco')">✕</button>
+        <div class="modal-tag">💰 Precificação</div>
+        <div class="modal-title">Estratégia de Preços</div>
+        <div class="modal-subtitle">Teste seus conhecimentos sobre precificação na Shopee</div>
+      </div>
+      <div class="q-progress-row">
+        <span class="q-prog-label" id="prog-label-preco">Pergunta 1 de 12</span>
+        <div class="q-score-pills">
+          <span class="q-pill c">✅ <span id="correct-preco">0</span></span>
+          <span class="q-pill e">❌ <span id="wrong-preco">0</span></span>
+        </div>
+      </div>
+      <div class="q-prog-bar-wrap">
+        <div class="q-prog-bar"><div class="q-prog-fill" id="fill-preco" style="width:0%"></div></div>
+      </div>
+      <div class="q-body">
+        <div class="q-profile-tag" id="profile-preco"></div>
+        <div class="q-scenario" id="scenario-preco"></div>
+        <div class="q-text" id="qtext-preco"></div>
+        <div class="q-context" id="qctx-preco"></div>
+        <div class="q-options" id="opts-preco"></div>
+        <div class="q-feedback" id="fb-preco"><div class="q-fb-title" id="fb-title-preco"></div><div class="q-fb-text" id="fb-text-preco"></div></div>
+        <div class="q-tip" id="tip-preco"><div class="q-tip-label">💡 Dica de Comunicação</div><div class="q-tip-text" id="tip-text-preco"></div></div>
+        <div class="q-nav"><button class="btn-next-q" id="next-preco" onclick="nextQ('preco')">Próxima →</button></div>
+      </div>
+    </div>
+    <div id="result-preco" class="q-result">
+      <div class="q-res-emoji" id="res-emoji-preco">🏆</div>
+      <div class="q-res-title" id="res-title-preco"></div>
+      <div class="q-res-sub" id="res-sub-preco"></div>
+      <div class="q-res-pct" id="res-pct-preco">0%</div>
+      <div class="q-res-pct-label">de aproveitamento</div>
+      <div class="q-breakdown">
+        <div class="q-bk-item"><div class="q-bk-icon">✅</div><div class="q-bk-label">Corretas</div><div class="q-bk-val" id="res-c-preco">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">❌</div><div class="q-bk-label">Erradas</div><div class="q-bk-val" id="res-e-preco">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">📊</div><div class="q-bk-label">Total</div><div class="q-bk-val" id="res-t-preco">12</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">⭐</div><div class="q-bk-label">Nível</div><div class="q-bk-val" id="res-lvl-preco">-</div></div>
+      </div>
+      <div class="q-res-btns">
+        <button class="btn-again" onclick="startQuiz('preco')">🔄 Tentar novamente</button>
+        <button class="btn-close-res" onclick="closeModal('preco')">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- CENTRAL DE MARKETING MODAL -->
+<!-- ============================================================ -->
+<div id="modal-marketing" class="modal-overlay" onclick="handleOverlay(event,'marketing')">
+  <div class="quiz-modal" id="quizbox-marketing">
+    <div id="start-marketing" class="modal-start-screen">
+      <div class="modal-start-icon">📣</div>
+      <div class="modal-start-title">Quiz — Central de Marketing</div>
+      <div class="modal-start-desc">12 perguntas sobre vouchers, campanhas e ferramentas de marketing da Shopee. Atendimento real com lojistas de todos os níveis.</div>
+      <div class="profile-tags">
+        <span class="profile-tag">😰 Ansioso</span>
+        <span class="profile-tag">😤 Estressado</span>
+        <span class="profile-tag">🔧 Técnico</span>
+        <span class="profile-tag">🙋 Leigo</span>
+      </div>
+      <div class="modal-start-btns">
+        <button class="btn-start-quiz" onclick="startQuiz('marketing')">Iniciar Quiz 🚀</button>
+        <button class="btn-cancel-modal" onclick="closeModal('marketing')">Fechar</button>
+      </div>
+    </div>
+    <div id="quiz-marketing" style="display:none">
+      <div class="modal-header">
+        <button class="modal-close" onclick="closeModal('marketing')">✕</button>
+        <div class="modal-tag">📣 Marketing</div>
+        <div class="modal-title">Central de Marketing</div>
+        <div class="modal-subtitle">Vouchers, campanhas e ferramentas de promoção</div>
+      </div>
+      <div class="q-progress-row">
+        <span class="q-prog-label" id="prog-label-marketing">Pergunta 1 de 12</span>
+        <div class="q-score-pills">
+          <span class="q-pill c">✅ <span id="correct-marketing">0</span></span>
+          <span class="q-pill e">❌ <span id="wrong-marketing">0</span></span>
+        </div>
+      </div>
+      <div class="q-prog-bar-wrap">
+        <div class="q-prog-bar"><div class="q-prog-fill" id="fill-marketing" style="width:0%"></div></div>
+      </div>
+      <div class="q-body">
+        <div class="q-profile-tag" id="profile-marketing"></div>
+        <div class="q-scenario" id="scenario-marketing"></div>
+        <div class="q-text" id="qtext-marketing"></div>
+        <div class="q-context" id="qctx-marketing"></div>
+        <div class="q-options" id="opts-marketing"></div>
+        <div class="q-feedback" id="fb-marketing"><div class="q-fb-title" id="fb-title-marketing"></div><div class="q-fb-text" id="fb-text-marketing"></div></div>
+        <div class="q-tip" id="tip-marketing"><div class="q-tip-label">💡 Dica de Comunicação</div><div class="q-tip-text" id="tip-text-marketing"></div></div>
+        <div class="q-nav"><button class="btn-next-q" id="next-marketing" onclick="nextQ('marketing')">Próxima →</button></div>
+      </div>
+    </div>
+    <div id="result-marketing" class="q-result">
+      <div class="q-res-emoji" id="res-emoji-marketing">🏆</div>
+      <div class="q-res-title" id="res-title-marketing"></div>
+      <div class="q-res-sub" id="res-sub-marketing"></div>
+      <div class="q-res-pct" id="res-pct-marketing">0%</div>
+      <div class="q-res-pct-label">de aproveitamento</div>
+      <div class="q-breakdown">
+        <div class="q-bk-item"><div class="q-bk-icon">✅</div><div class="q-bk-label">Corretas</div><div class="q-bk-val" id="res-c-marketing">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">❌</div><div class="q-bk-label">Erradas</div><div class="q-bk-val" id="res-e-marketing">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">📊</div><div class="q-bk-label">Total</div><div class="q-bk-val" id="res-t-marketing">12</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">⭐</div><div class="q-bk-label">Nível</div><div class="q-bk-val" id="res-lvl-marketing">-</div></div>
+      </div>
+      <div class="q-res-btns">
+        <button class="btn-again" onclick="startQuiz('marketing')">🔄 Tentar novamente</button>
+        <button class="btn-close-res" onclick="closeModal('marketing')">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- AFILIADOS MODAL -->
+<!-- ============================================================ -->
+<div id="modal-afiliados" class="modal-overlay" onclick="handleOverlay(event,'afiliados')">
+  <div class="quiz-modal" id="quizbox-afiliados">
+    <div id="start-afiliados" class="modal-start-screen">
+      <div class="modal-start-icon">🤝</div>
+      <div class="modal-start-title">Quiz — Afiliados</div>
+      <div class="modal-start-desc">12 perguntas sobre o Programa de Afiliados da Shopee. Da dúvida básica ao problema técnico, com diferentes perfis de parceiro.</div>
+      <div class="profile-tags">
+        <span class="profile-tag">😰 Ansioso</span>
+        <span class="profile-tag">😤 Estressado</span>
+        <span class="profile-tag">🔧 Técnico</span>
+        <span class="profile-tag">🙋 Leigo</span>
+      </div>
+      <div class="modal-start-btns">
+        <button class="btn-start-quiz" onclick="startQuiz('afiliados')">Iniciar Quiz 🚀</button>
+        <button class="btn-cancel-modal" onclick="closeModal('afiliados')">Fechar</button>
+      </div>
+    </div>
+    <div id="quiz-afiliados" style="display:none">
+      <div class="modal-header">
+        <button class="modal-close" onclick="closeModal('afiliados')">✕</button>
+        <div class="modal-tag">🤝 Afiliados</div>
+        <div class="modal-title">Programa de Afiliados</div>
+        <div class="modal-subtitle">Comissões, links e estratégias de parceria</div>
+      </div>
+      <div class="q-progress-row">
+        <span class="q-prog-label" id="prog-label-afiliados">Pergunta 1 de 12</span>
+        <div class="q-score-pills">
+          <span class="q-pill c">✅ <span id="correct-afiliados">0</span></span>
+          <span class="q-pill e">❌ <span id="wrong-afiliados">0</span></span>
+        </div>
+      </div>
+      <div class="q-prog-bar-wrap">
+        <div class="q-prog-bar"><div class="q-prog-fill" id="fill-afiliados" style="width:0%"></div></div>
+      </div>
+      <div class="q-body">
+        <div class="q-profile-tag" id="profile-afiliados"></div>
+        <div class="q-scenario" id="scenario-afiliados"></div>
+        <div class="q-text" id="qtext-afiliados"></div>
+        <div class="q-context" id="qctx-afiliados"></div>
+        <div class="q-options" id="opts-afiliados"></div>
+        <div class="q-feedback" id="fb-afiliados"><div class="q-fb-title" id="fb-title-afiliados"></div><div class="q-fb-text" id="fb-text-afiliados"></div></div>
+        <div class="q-tip" id="tip-afiliados"><div class="q-tip-label">💡 Dica de Comunicação</div><div class="q-tip-text" id="tip-text-afiliados"></div></div>
+        <div class="q-nav"><button class="btn-next-q" id="next-afiliados" onclick="nextQ('afiliados')">Próxima →</button></div>
+      </div>
+    </div>
+    <div id="result-afiliados" class="q-result">
+      <div class="q-res-emoji" id="res-emoji-afiliados">🏆</div>
+      <div class="q-res-title" id="res-title-afiliados"></div>
+      <div class="q-res-sub" id="res-sub-afiliados"></div>
+      <div class="q-res-pct" id="res-pct-afiliados">0%</div>
+      <div class="q-res-pct-label">de aproveitamento</div>
+      <div class="q-breakdown">
+        <div class="q-bk-item"><div class="q-bk-icon">✅</div><div class="q-bk-label">Corretas</div><div class="q-bk-val" id="res-c-afiliados">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">❌</div><div class="q-bk-label">Erradas</div><div class="q-bk-val" id="res-e-afiliados">0</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">📊</div><div class="q-bk-label">Total</div><div class="q-bk-val" id="res-t-afiliados">12</div></div>
+        <div class="q-bk-item"><div class="q-bk-icon">⭐</div><div class="q-bk-label">Nível</div><div class="q-bk-val" id="res-lvl-afiliados">-</div></div>
+      </div>
+      <div class="q-res-btns">
+        <button class="btn-again" onclick="startQuiz('afiliados')">🔄 Tentar novamente</button>
+        <button class="btn-close-res" onclick="closeModal('afiliados')">Fechar</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 /* ============================================================
-   BANCO DE PERGUNTAS ADS — 8 perguntas exclusivas
+   BANCO DE PERGUNTAS — 4 temas × 12 perguntas × 5 opções
+   Perfis: 😰 Ansioso | 😤 Estressado | 🔧 Técnico | 🙋 Leigo
    ============================================================ */
-const adsQuestions = [
+
+const BANKS = {
+
+/* ======================== ADS ======================== */
+ads: [
   {
-    scenario: "Lojista confuso no chat",
-    text: "Um lojista diz: 'Coloquei dinheiro em ADS mas meu produto não aparece em nenhuma busca. Fui roubado?' Como você responde?",
-    context: "O cliente está irritado e desconfiante. Não sabe nada sobre como ADS funciona.",
+    profile: "🙋 Perfil Leigo",
+    scenario: "Primeira vez usando ADS",
+    text: "Lojista diz: 'Coloquei dinheiro em ADS mas meu produto não aparece em nenhuma busca. Fui roubado?'",
+    context: "O cliente é iniciante, não entende como o leilão de ADS funciona e está desconfiante.",
     options: [
-      { text: "Explica que ADS funciona por leilão: o anúncio aparece conforme o lance, relevância do produto e orçamento — e que o dinheiro só é cobrado quando há clique ou exibição.", correct: true },
+      { text: "Explica que ADS funciona por leilão: o anúncio aparece conforme lance, relevância e orçamento — e que o saldo só é consumido quando há clique ou exibição.", correct: true },
       { text: "Diz que ADS sempre funciona e pede para ele esperar mais.", correct: false },
-      { text: "Manda o link da central de ajuda para ele entender melhor.", correct: false },
-      { text: "Pergunta se ele tem nota fiscal do crédito inserido.", correct: false }
+      { text: "Manda o link da central de ajuda sem mais explicações.", correct: false },
+      { text: "Pergunta se ele tem nota fiscal do crédito inserido.", correct: false },
+      { text: "Sugere que ele feche a conta e abra uma nova.", correct: false }
     ],
     feedbackCorrect: "Perfeito! Você validou a preocupação e explicou a lógica do leilão de forma simples e transparente. Isso constrói confiança.",
-    feedbackWrong: "Clientes irritados precisam de explicação clara e empática, não de respostas vagas ou burocracia. Explique o modelo de leilão do ADS.",
-    tip: "Use analogias simples: 'É como um leilão — quem oferece mais e tem produto relevante aparece na frente.' Isso torna o conceito acessível para qualquer lojista."
+    feedbackWrong: "Clientes leigos precisam de explicação clara e empática. Explique o modelo de leilão de forma simples e acessível.",
+    tip: "Use analogias: 'É como um leilão — quem oferece mais e tem produto relevante aparece na frente.' Torna o conceito acessível para qualquer lojista."
   },
   {
+    profile: "😰 Perfil Ansioso",
     scenario: "Urgência competitiva",
     text: "Lojista: 'Meu concorrente está aparecendo na frente de mim em TODOS os resultados. O que posso fazer agora, hoje?'",
-    context: "O lojista está em pânico e quer ação imediata.",
+    context: "O lojista está em pânico e quer ação imediata. Ele acredita que está perdendo vendas a cada minuto.",
     options: [
-      { text: "Falar para ele esperar porque ADS demora para funcionar.", correct: false },
-      { text: "Sugerir que ele aumente o lance por clique, revise as palavras-chave e verifique se o orçamento diário não está esgotando cedo.", correct: true },
-      { text: "Dizer que não há controle sobre o algoritmo.", correct: false },
-      { text: "Pedir print de tela antes de orientar qualquer coisa.", correct: false }
+      { text: "Fala para ele esperar porque ADS demora para funcionar.", correct: false },
+      { text: "Sugere aumentar o lance por clique, revisar palavras-chave e verificar se o orçamento diário não esgota cedo.", correct: true },
+      { text: "Diz que não há controle sobre o algoritmo.", correct: false },
+      { text: "Pede print de tela antes de orientar qualquer coisa.", correct: false },
+      { text: "Recomenda pausar o ADS e reativar no dia seguinte.", correct: false }
     ],
     feedbackCorrect: "Ótimo! Você agiu de forma consultiva com ações concretas e imediatas. O lojista sente que você é um aliado.",
-    feedbackWrong: "Respostas vagas ou que transferem responsabilidade frustram o lojista. Sempre entregue ao menos uma ação concreta que ele pode fazer agora.",
-    tip: "Sempre que puder, entregue UMA ação concreta e imediata. Isso diferencia um bom atendimento de um atendimento mediano."
+    feedbackWrong: "Respostas vagas frustram o lojista ansioso. Sempre entregue ao menos uma ação concreta que ele pode fazer agora.",
+    tip: "Com perfis ansiosos, sempre entregue UMA ação imediata. Isso diferencia um bom atendimento de um atendimento mediano."
   },
   {
-    scenario: "Expectativa vs. realidade",
-    text: "Lojista: 'Já gastei R$200 em ADS essa semana e só vendi 2 produtos. Isso é normal?'",
-    context: "O lojista não entende métricas de performance e acha que ADS deveria gerar venda automática.",
+    profile: "😤 Perfil Estressado",
+    scenario: "Cobrança inesperada",
+    text: "Lojista irritado: 'Meu saldo de ADS zerou do nada! Eu não autorizei isso! Quero meu dinheiro de volta imediatamente!'",
+    context: "O lojista não entende como o sistema de cobrança funciona e está muito irritado.",
     options: [
-      { text: "Diz que R$200 é pouco e ele precisa investir mais.", correct: false },
-      { text: "Explica que ADS gera visibilidade, não venda garantida, e que foto, preço e avaliações influenciam a conversão — e propõe analisar as métricas juntos.", correct: true },
-      { text: "Confirma que é normal e encerra o atendimento.", correct: false },
-      { text: "Recomenda desativar os anúncios e reconfigurar tudo.", correct: false }
+      { text: "Diz que ele provavelmente configurou errado e é culpa dele.", correct: false },
+      { text: "Pede calma e informa que isso não é possível fazer.", correct: false },
+      { text: "Valida a preocupação, explica que o saldo é consumido conforme cliques/exibições dentro do orçamento configurado, e orienta como verificar o relatório de gastos.", correct: true },
+      { text: "Abre um chamado de reembolso automaticamente sem investigar.", correct: false },
+      { text: "Diz que vai escalar para o financeiro sem mais detalhes.", correct: false }
     ],
-    feedbackCorrect: "Excelente! Você educou o lojista sobre o papel do ADS e aproveitou para um atendimento consultivo.",
-    feedbackWrong: "O cliente precisa entender a diferença entre visibilidade e conversão. Sem essa explicação, ele ficará frustrado indefinidamente.",
-    tip: "Separe sempre visibilidade (ADS) de conversão (produto, preço, fotos). Isso educa o lojista e reduz reclamações futuras."
+    feedbackCorrect: "Muito bem! Você não culpou o cliente nem fez promessas indevidas — explicou o processo e deu uma ação concreta.",
+    feedbackWrong: "Com clientes estressados, validar o sentimento antes de explicar é essencial. Nunca culpe o cliente logo de início.",
+    tip: "Fórmula para estressados: 1) Valide a preocupação 2) Explique o que aconteceu 3) Mostre como verificar. Ordem importa muito."
   },
   {
-    scenario: "Dúvida técnica: palavras-chave",
-    text: "Lojista: 'Devo usar palavras-chave amplas ou exatas no meu ADS? Qual a diferença na prática?'",
-    context: "O lojista está configurando um anúncio pela primeira vez e quer entender as opções.",
+    profile: "🔧 Perfil Técnico",
+    scenario: "Otimização de ROAS",
+    text: "Lojista avançado pergunta: 'Meu ROAS está em 1,8 e quero chegar a 3,0. O que devo ajustar primeiro no ADS?'",
+    context: "O lojista conhece métricas e quer uma orientação estratégica e precisa.",
     options: [
-      { text: "Diz que não faz diferença e que qualquer uma serve.", correct: false },
-      { text: "Explica que palavras amplas alcançam mais pessoas mas com menor precisão, enquanto exatas focam em quem busca exatamente aquele termo — e orienta a combinar as duas estratégias.", correct: true },
-      { text: "Recomenda usar só palavras exatas para economizar.", correct: false },
-      { text: "Sugere não usar palavras-chave e deixar o automático.", correct: false }
+      { text: "Diz que ROAS depende do mercado e não há muito o que fazer.", correct: false },
+      { text: "Sugere aumentar o orçamento diário para aparecer mais.", correct: false },
+      { text: "Orienta revisar as palavras-chave de baixo desempenho, ajustar lances por conversão, segmentar melhor o público e analisar quais produtos têm maior margem para priorizar.", correct: true },
+      { text: "Recomenda trocar o tipo de campanha sem analisar os dados atuais.", correct: false },
+      { text: "Pede para ele aguardar 30 dias e ver se melhora sozinho.", correct: false }
     ],
-    feedbackCorrect: "Muito bem! Você deu uma explicação prática e orientou o lojista a usar a melhor combinação das duas estratégias.",
-    feedbackWrong: "Palavras amplas e exatas têm funções diferentes. Explicar isso corretamente ajuda o lojista a investir melhor o orçamento de ADS.",
-    tip: "Use a metáfora da pesca: 'Palavra ampla é rede de arrasto — pega mais mas traz misturado. Palavra exata é anzol — pesca quem você quer.' Simples e memorável."
+    feedbackCorrect: "Excelente! Você demonstrou conhecimento técnico e deu um roteiro de otimização estruturado — exatamente o que o perfil técnico espera.",
+    feedbackWrong: "Perfis técnicos esperam respostas precisas e estruturadas. Respostas vagas ou genéricas destroem a credibilidade.",
+    tip: "Com perfis técnicos, use a linguagem deles: ROAS, CPC, CTR, conversão. Isso mostra competência e gera respeito imediato."
   },
   {
-    scenario: "Orçamento esgotado cedo",
-    text: "Lojista: 'Meu orçamento diário de ADS acaba sempre antes das 10h da manhã. O que está acontecendo?'",
-    context: "O lojista não entende por que o orçamento se esgota tão rápido.",
+    profile: "🙋 Perfil Leigo",
+    scenario: "Confusão com tipos de anúncio",
+    text: "Lojista: 'Qual a diferença entre Anúncio de Pesquisa e Anúncio de Descoberta? Qual escolho?'",
+    context: "O lojista está confuso com os tipos de campanha e precisa de orientação simples para decidir.",
     options: [
-      { text: "Diz que é normal e que ele deveria aumentar o orçamento.", correct: false },
-      { text: "Explica que o orçamento pode estar baixo para a competitividade do nicho ou que o lance está alto demais — e sugere distribuir o orçamento ao longo do dia ou aumentá-lo com base no CPV atual.", correct: true },
-      { text: "Sugere pausar o ADS até o fim do mês.", correct: false },
-      { text: "Diz que é um bug da plataforma.", correct: false }
+      { text: "Diz que ambos são iguais e ele pode escolher qualquer um.", correct: false },
+      { text: "Explica que Pesquisa aparece quando o cliente busca algo específico, enquanto Descoberta aparece no feed mesmo sem busca — e sugere começar pela Pesquisa se quer vendas mais imediatas.", correct: true },
+      { text: "Manda uma tabela comparativa sem explicação adicional.", correct: false },
+      { text: "Diz que depende do produto e não há resposta certa.", correct: false },
+      { text: "Recomenda ativar os dois ao mesmo tempo para cobrir mais espaço.", correct: false }
     ],
-    feedbackCorrect: "Perfeito! Você diagnosticou as causas possíveis e deu orientações concretas para resolver o problema.",
-    feedbackWrong: "Dizer apenas 'aumente o orçamento' sem diagnóstico não ajuda o lojista. Analise as causas: lance alto demais ou nicho muito competitivo.",
-    tip: "Pergunte ao lojista o CPV (Custo por Visualização) atual antes de recomendar aumentar orçamento. Com esse dado, a recomendação fica muito mais precisa."
+    feedbackCorrect: "Perfeito! Você usou linguagem simples, explicou a diferença prática e deu uma recomendação clara. Isso é orientação consultiva.",
+    feedbackWrong: "Perfis leigos precisam de orientação direta. Respostas vagas ou técnicas demais geram mais confusão.",
+    tip: "Sempre que explicar dois conceitos diferentes, use: 'A diferença prática é...' e termine com uma recomendação direta. Leigos precisam de conclusão, não de abertura."
   },
   {
-    scenario: "Métricas confusas",
-    text: "Lojista: 'Tenho muitas impressões no ADS mas pouquíssimos cliques. O que está errado?'",
-    context: "O lojista não entende a relação entre impressões, CTR e conversão.",
+    profile: "😰 Perfil Ansioso",
+    scenario: "Medo de gastar demais",
+    text: "Lojista: 'Tenho medo de ativar o ADS e gastar todo meu dinheiro sem retorno. Como sei que não vou jogar tudo fora?'",
+    context: "O lojista quer começar mas tem muito medo do risco financeiro. Está em modo de proteção.",
     options: [
-      { text: "Diz que impressões altas são ótimas e não há nada a corrigir.", correct: false },
-      { text: "Explica que CTR baixo pode indicar que a foto principal, título ou preço não estão atraentes suficientes para o público que está vendo o anúncio.", correct: true },
-      { text: "Recomenda aumentar o lance imediatamente.", correct: false },
-      { text: "Diz que é culpa do algoritmo da Shopee.", correct: false }
+      { text: "Garante que ADS sempre traz retorno se configurado certo.", correct: false },
+      { text: "Diz que o risco é real e ele deveria esperar ter mais caixa.", correct: false },
+      { text: "Explica que é possível começar com orçamento diário baixo, monitorar o desempenho a cada 3 dias e ajustar antes de escalar — e que o controle está nas mãos dele.", correct: true },
+      { text: "Pede para ele fazer um curso antes de ativar o ADS.", correct: false },
+      { text: "Diz que não pode garantir resultados e que é por conta e risco dele.", correct: false }
     ],
-    feedbackCorrect: "Excelente diagnóstico! Impressão alta com CTR baixo é sinal claro de que a vitrine do produto precisa melhorar.",
-    feedbackWrong: "CTR baixo com muitas impressões aponta para um problema de atração visual, não de orçamento. A solução está na foto, título e preço.",
-    tip: "Ensine o lojista a equação: 'Impressão = vitrina. Clique = porta. Venda = caixa.' Se as pessoas veem mas não entram, a vitrine precisa melhorar."
+    feedbackCorrect: "Muito bem! Você devolveu o controle para o lojista e reduziu o medo com um plano concreto. Isso é apoio de qualidade.",
+    feedbackWrong: "Com perfis ansiosos sobre dinheiro, nunca faça promessas nem transfira o risco abruptamente. Mostre que o controle está com ele.",
+    tip: "Para perfis ansiosos com medo de perder dinheiro: 'Você controla quanto gasta por dia. Começa com R$5 e vê o que acontece.' Isso transforma paralisia em ação."
   },
   {
-    scenario: "Produto sem resultado",
-    text: "Lojista: 'Estou anunciando com ADS há 2 semanas sem nenhuma venda. Devo desistir do ADS?'",
-    context: "O lojista está desanimado e considerando cancelar o investimento em ADS.",
+    profile: "🔧 Perfil Técnico",
+    scenario: "Análise de CTR baixo",
+    text: "Lojista: 'Meu anúncio tem 3.000 impressões mas só 12 cliques. CTR de 0,4% é muito baixo? O que está errado?'",
+    context: "O lojista sabe interpretar dados e quer um diagnóstico técnico preciso.",
     options: [
-      { text: "Diz que sim, ADS não funciona para todos.", correct: false },
-      { text: "Antes de desistir, propõe revisar juntos: as fotos do produto, o preço em relação à concorrência, as avaliações e se as palavras-chave estão alinhadas ao que o comprador busca.", correct: true },
-      { text: "Pede para ele aumentar o orçamento por mais 2 semanas.", correct: false },
-      { text: "Sugere trocar de produto para anunciar.", correct: false }
+      { text: "Diz que 0,4% é normal e não há o que fazer.", correct: false },
+      { text: "Confirma que 0,4% está abaixo da média, e orienta revisar a imagem principal do produto, o título, o preço em relação à concorrência e as palavras-chave para verificar se estão alinhadas com a intenção de compra.", correct: true },
+      { text: "Sugere aumentar o lance para conseguir mais impressões.", correct: false },
+      { text: "Recomenda pausar o anúncio e reativar com novo orçamento.", correct: false },
+      { text: "Pede para ele esperar 30 dias antes de qualquer ajuste.", correct: false }
     ],
-    feedbackCorrect: "Muito bem! Você impediu uma desistência prematura e propôs uma análise estruturada. Isso é atendimento consultivo de alto nível.",
-    feedbackWrong: "ADS sem resultado geralmente indica problema na ficha do produto, não no ADS em si. Revisar os fundamentos antes de desistir é sempre o caminho.",
-    tip: "ADS potencializa o que já funciona — não conserta produto ruim. Se não há clique mesmo com impressão, o problema está na ficha. Se há clique mas não há venda, o problema está na página."
+    feedbackCorrect: "Perfeito! Você confirmou o diagnóstico com dados reais e deu um roteiro técnico de otimização de CTR. Exatamente o que o perfil técnico precisa.",
+    feedbackWrong: "Com perfis técnicos, valide os dados antes de responder. CTR de 0,4% está realmente abaixo da média e merece análise séria.",
+    tip: "Para diagnósticos técnicos: confirme o benchmark ('a média é X%'), depois liste os fatores a checar em ordem de impacto. Isso mostra método e gera confiança."
   },
   {
-    scenario: "Estratégia avançada",
-    text: "Lojista experiente: 'Quero usar ADS para lançar um produto novo sem nenhuma avaliação. Vale a pena ou é dinheiro perdido?'",
-    context: "O lojista já tem experiência com ADS e quer uma orientação estratégica.",
+    profile: "😤 Perfil Estressado",
+    scenario: "Anúncio reprovado sem aviso",
+    text: "Lojista: 'Meu anúncio foi reprovado e nem me avisaram! Perdi dias de campanha. Isso é um absurdo!'",
+    context: "O lojista perdeu receita por uma reprovação e está com raiva. Sente falta de comunicação proativa.",
     options: [
-      { text: "Diz que sem avaliação não vale investir em ADS.", correct: false },
-      { text: "Explica que ADS para lançamento pode funcionar, mas recomenda começar com orçamento menor, focar em palavras-chave de nicho, ter fotos e descrição impecáveis, e buscar as primeiras avaliações rapidamente via pós-venda.", correct: true },
-      { text: "Sugere esperar ter pelo menos 20 avaliações antes de ativar ADS.", correct: false },
-      { text: "Recomenda criar um segundo produto igual só para acumular avaliações.", correct: false }
+      { text: "Defende a plataforma dizendo que as regras são claras.", correct: false },
+      { text: "Pede desculpas excessivamente sem dar nenhuma solução.", correct: false },
+      { text: "Reconhece a frustração, explica os possíveis motivos de reprovação (política de conteúdo, imagem, título), orienta como corrigir e reenviar para revisão rapidamente.", correct: true },
+      { text: "Diz que não é possível recuperar os dias perdidos e muda de assunto.", correct: false },
+      { text: "Pede que ele aguarde 5 dias úteis para uma resposta formal.", correct: false }
     ],
-    feedbackCorrect: "Perfeito! Você deu uma resposta estratégica e equilibrada, mostrando como usar ADS de forma inteligente mesmo no lançamento.",
-    feedbackWrong: "ADS no lançamento pode funcionar com a estratégia certa. Negar essa possibilidade é perder uma oportunidade de orientar bem o lojista.",
-    tip: "Para lançamentos, oriente: 'Comece pequeno para testar a receptividade. Com as primeiras vendas e avaliações, escale o investimento.' Isso reduz risco e aumenta a taxa de sucesso."
+    feedbackCorrect: "Muito bem! Você acolheu a raiva, explicou a causa, deu a solução e manteve o foco no que pode ser feito agora.",
+    feedbackWrong: "Perfis estressados querem validação e solução. Nunca defenda a plataforma antes de validar o sentimento do cliente.",
+    tip: "Quando o cliente perdeu dinheiro, o primeiro passo não é explicar as regras — é reconhecer o impacto. Só depois a solução entra com autoridade."
+  },
+  {
+    profile: "🙋 Perfil Leigo",
+    scenario: "Dúvida sobre pagamento",
+    text: "Lojista: 'Eu pago por clique ou por venda no ADS? Não entendi nada disso.'",
+    context: "O lojista está começando e não entende os modelos de cobrança. Precisa de clareza total.",
+    options: [
+      { text: "Diz que ele paga por venda e só perde dinheiro se não vender.", correct: false },
+      { text: "Explica que no modelo CPC (custo por clique) ele paga cada vez que alguém clica no anúncio — independente de comprar — e por isso é importante que o produto e preço sejam atrativos.", correct: true },
+      { text: "Manda o glossário de termos sem explicação.", correct: false },
+      { text: "Diz que depende do tipo de campanha sem detalhar.", correct: false },
+      { text: "Recomenda não usar ADS até entender tudo.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você explicou o modelo CPC com clareza e já adicionou contexto sobre por que a qualidade do produto importa. Isso é educação consultiva.",
+    feedbackWrong: "Perfis leigos precisam que o básico seja explicado sem jargão. CPC precisa ser traduzido em linguagem cotidiana.",
+    tip: "Para leigos, sempre substitua siglas por descrição: ao invés de 'CPC', diga 'você paga cada vez que alguém clica'. Só depois apresente o nome técnico."
+  },
+  {
+    profile: "😰 Perfil Ansioso",
+    scenario: "Resultado abaixo do esperado",
+    text: "Lojista: 'Gastei R$200 em ADS essa semana e só vendi R$180. Estou no prejuízo! Devo parar tudo agora?'",
+    context: "O lojista está assustado com o resultado negativo da primeira semana e quer uma decisão imediata.",
+    options: [
+      { text: "Confirma que ele está no prejuízo e deve pausar imediatamente.", correct: false },
+      { text: "Diz que uma semana é pouco para avaliar e para continuar gastando.", correct: false },
+      { text: "Calma o cliente, explica que a primeira semana é de aprendizado do algoritmo, orienta a analisar quais palavras-chave trouxeram os cliques sem conversão e ajustar antes de pausar precipitadamente.", correct: true },
+      { text: "Promete que a segunda semana será melhor.", correct: false },
+      { text: "Sugere dobrar o orçamento para compensar o prejuízo.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você não minimizou o problema nem amplificou o pânico. Deu uma perspectiva real e um próximo passo concreto.",
+    feedbackWrong: "Com ansiosos em situação de perda, nem drama nem falsas promessas. Oriente com dados e um próximo passo concreto.",
+    tip: "'Uma semana é o período de aprendizado do algoritmo' é uma frase que transforma pânico em paciência. Use com confiança — é verdade e muda a perspectiva."
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "Estratégia de palavras-chave negativas",
+    text: "Lojista: 'Devo usar palavras-chave negativas no meu ADS? Como isso impacta meu desempenho?'",
+    context: "O lojista já tem experiência e quer usar recursos avançados de segmentação.",
+    options: [
+      { text: "Diz que palavras-chave negativas não são necessárias para produtos simples.", correct: false },
+      { text: "Explica que palavras-chave negativas evitam que o anúncio seja exibido em buscas irrelevantes, reduzindo desperdício de orçamento e aumentando CTR — e exemplifica com casos práticos.", correct: true },
+      { text: "Recomenda não usar para não limitar o alcance.", correct: false },
+      { text: "Diz que esse recurso é experimental e pode causar problemas.", correct: false },
+      { text: "Pede para ele testar sem palavras negativas primeiro por 60 dias.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você tratou a pergunta técnica com precisão e complementou com exemplos práticos, o que transforma teoria em ação.",
+    feedbackWrong: "Palavras-chave negativas são uma ferramenta poderosa de otimização. Perfis técnicos merecem respostas técnicas completas.",
+    tip: "Sempre que falar de palavras-chave negativas, use um exemplo concreto: 'Se você vende tênis esportivo, adicione 'sapato social' como negativa.' Exemplos fixam o conceito."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Campanha pausada automaticamente",
+    text: "Lojista: 'Minha campanha de ADS pausou sozinha no meio do dia e eu nem sabia! Perdi a data especial toda!'",
+    context: "O lojista não sabia que o orçamento diário havia se esgotado e culpa o sistema.",
+    options: [
+      { text: "Culpa o lojista por não monitorar o orçamento.", correct: false },
+      { text: "Diz que o sistema age corretamente e que não há o que fazer.", correct: false },
+      { text: "Reconhece o impacto, explica que a campanha pausa quando o orçamento diário se esgota, orienta como aumentar o limite e configurar alertas para evitar que aconteça novamente.", correct: true },
+      { text: "Promete investigar e retornar em 5 dias úteis.", correct: false },
+      { text: "Sugere criar uma nova campanha sem orçamento diário limite.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você explicou a causa sem culpar o cliente, deu a solução e ainda ensinou como evitar no futuro. Isso é atendimento de excelência.",
+    feedbackWrong: "Nunca diga 'funciona corretamente' para um cliente que perdeu vendas. Reconheça o impacto e ofereça uma solução prática.",
+    tip: "Sempre transforme o problema em aprendizado: 'Para evitar que isso aconteça de novo, você pode configurar...' — isso muda a conversa de reclamação para solução."
   }
-];
+],
 
-/* ============================================================
-   BANCO DE PERGUNTAS GERAL (quiz completo)
-   ============================================================ */
-const questions = [
+/* ======================== PRECIFICAÇÃO ======================== */
+preco: [
   {
-    topic: "📢 ADS",
-    scenario: "Cliente confuso no chat",
-    text: "Um lojista te diz: "Coloquei dinheiro em ADS mas meu produto não aparece em nenhuma busca. Fui roubado?" Como você responde?",
-    context: "O cliente está irritado e desconfiante. Não sabe nada sobre como ADS funciona.",
+    profile: "🙋 Perfil Leigo",
+    scenario: "Dúvida fundamental sobre preço",
+    text: "Lojista iniciante: 'Posso colocar o preço que eu quiser no meu produto ou a Shopee define um limite?'",
+    context: "O lojista não sabe das regras de precificação da plataforma e está inseguro para cadastrar seus produtos.",
     options: [
-      { text: "Explica que ADS funciona por leilão e o anúncio aparece conforme o lance, a relevância do produto e o orçamento disponível — e que o dinheiro não foi cobrado sem exibição.", correct: true },
-      { text: "Diz que ADS sempre funciona e pede para ele esperar mais.", correct: false },
-      { text: "Manda ele ler a central de ajuda para entender melhor.", correct: false },
-      { text: "Pergunta se ele tem nota fiscal do crédito inserido.", correct: false }
+      { text: "Diz que pode colocar qualquer preço sem restrições.", correct: false },
+      { text: "Explica que existe liberdade de preço, mas a Shopee pode sinalizar preços irregulares quando há grande divergência entre variações ou quando o valor está muito acima do mercado em campanhas.", correct: true },
+      { text: "Diz que a Shopee define o preço automaticamente.", correct: false },
+      { text: "Pede para ele checar o preço dos concorrentes e copiar.", correct: false },
+      { text: "Diz que preço baixo sempre vende mais e ele deve abaixar.", correct: false }
     ],
-    feedbackCorrect: "Perfeito! Você validou a preocupação do cliente e explicou a lógica do leilão de forma simples e transparente. Isso constrói confiança.",
-    feedbackWrong: "Atenção! Clientes irritados precisam de explicação clara e empática, não de respostas vagas ou burocracia.",
-    tip: "Ao explicar ADS, use analogias simples: "É como um leilão — quem oferece mais e tem produto relevante aparece na frente." Isso torna o conceito acessível para qualquer perfil de lojista."
+    feedbackCorrect: "Perfeito! Você deu a resposta certa com a nuance importante: liberdade existe, mas há sinalizações da plataforma em casos específicos.",
+    feedbackWrong: "A precificação tem liberdade sim, mas com sinalizações da plataforma. Informar isso evita surpresas futuras para o lojista.",
+    tip: "Sempre que responder 'pode fazer X', acrescente a condição: 'pode, mas atenção quando...' Isso educa o lojista e previne problemas futuros."
   },
   {
-    topic: "📢 ADS",
-    scenario: "Situação de urgência",
-    text: "Um lojista diz: "Meu concorrente está aparecendo na frente de mim em TODOS os resultados. O que posso fazer agora, hoje?" Qual é a resposta mais útil?",
-    context: "O lojista está em pânico e quer ação imediata.",
+    profile: "😤 Perfil Estressado",
+    scenario: "Pressão por preço baixo",
+    text: "Lojista irritado: 'Meu concorrente está vendendo pelo mesmo preço que eu compro! Como eu posso competir com isso? É uma concorrência desleal!'",
+    context: "O lojista sente que o mercado está contra ele e quer uma solução imediata.",
     options: [
-      { text: "Falar para ele esperar porque ADS demora para funcionar.", correct: false },
-      { text: "Sugerir que ele aumente o lance por clique, revise as palavras-chave selecionadas e verifique se o orçamento diário não está esgotando cedo.", correct: true },
-      { text: "Dizer que não tem controle sobre o algoritmo.", correct: false },
-      { text: "Pedir print de tela antes de orientar qualquer coisa.", correct: false }
+      { text: "Concorda que a concorrência é desleal e valida a raiva sem oferecer solução.", correct: false },
+      { text: "Diz que ele precisa abaixar o preço para competir.", correct: false },
+      { text: "Reconhece a frustração, orienta sobre diferenciação por valor — fotos, avaliações, qualidade do atendimento, kits — em vez de guerra de preço que destrói margem.", correct: true },
+      { text: "Sugere denunciar o concorrente por dumping.", correct: false },
+      { text: "Diz que o mercado é assim e que ele tem que se adaptar ou sair.", correct: false }
     ],
-    feedbackCorrect: "Ótimo! Você agiu de forma consultiva, dando ações concretas e imediatas. O lojista sente que você é um aliado.",
-    feedbackWrong: "Respostas vagas ou que transferem responsabilidade frustram o lojista e prejudicam a confiança na Shopee.",
-    tip: "Sempre que puder, entregue ao menos UMA ação concreta que o lojista pode fazer agora. Isso diferencia um bom atendimento de um atendimento mediano."
+    feedbackCorrect: "Muito bem! Você validou a frustração e apresentou uma saída estratégica real — diferenciação de valor em vez de guerra de preço.",
+    feedbackWrong: "Nunca diga para abaixar o preço sem analisar a margem. O caminho sustentável é diferenciação, não guerra de preço.",
+    tip: "Quando o cliente fala em 'concorrência desleal', pergunte: 'O que seu produto oferece que o dele não oferece?' Isso abre a conversa para diferenciação."
   },
   {
-    topic: "📢 ADS",
-    scenario: "Expectativa vs realidade",
-    text: "Lojista: "Já gastei R$200 em ADS essa semana e só vendi 2 produtos. Isso é normal?" Como você aborda isso?",
-    context: "O lojista não entende métricas de performance e acha que ADS deveria gerar venda automática.",
+    profile: "😰 Perfil Ansioso",
+    scenario: "Medo de errar o preço",
+    text: "Lojista: 'Tenho medo de colocar o preço errado e perder dinheiro ou vender abaixo do custo. Como calculo o preço certo?'",
+    context: "O lojista está inseguro para cadastrar o produto por não saber se vai cobrir custos.",
     options: [
-      { text: "Diz que R$200 é pouco e ele precisa investir mais.", correct: false },
-      { text: "Explica que ADS gera visibilidade, não venda garantida, e que outros fatores como foto, preço e avaliações influenciam a conversão — e propõe analisar juntos as métricas.", correct: true },
-      { text: "Confirma que é normal e encerra o atendimento.", correct: false },
-      { text: "Pede que ele desative os anúncios e reconfigure tudo.", correct: false }
+      { text: "Diz que é só verificar o preço médio do mercado e copiar.", correct: false },
+      { text: "Orienta calcular o preço mínimo cobrindo: custo do produto + frete + taxas da plataforma + margem desejada — e apenas depois comparar com o mercado.", correct: true },
+      { text: "Diz que vai depender do produto e não há fórmula.", correct: false },
+      { text: "Manda uma planilha genérica sem explicar como usar.", correct: false },
+      { text: "Recomenda começar vendendo no prejuízo para ganhar avaliações.", correct: false }
     ],
-    feedbackCorrect: "Excelente! Você educou o lojista sobre o papel do ADS e usou o momento para um atendimento consultivo.",
-    feedbackWrong: "O cliente precisa entender a diferença entre visibilidade e conversão. Sem essa explicação, ele ficará frustrado indefinidamente.",
-    tip: "Separe sempre visibilidade (ADS) de conversão (produto, preço, fotos). Isso educa o lojista e o ajuda a ter expectativas realistas — o que reduz reclamações futuras."
+    feedbackCorrect: "Excelente! Você deu uma fórmula clara e prática que reduz a insegurança do lojista ansioso. Ordem correta: custo → margem → mercado.",
+    feedbackWrong: "O lojista ansioso precisa de uma fórmula, não de uma resposta vaga. Custo + taxas + margem = preço mínimo. Isso devolve controle.",
+    tip: "A sequência certa de precificação: 1) Calcule o mínimo viável 2) Defina sua margem desejada 3) Compare com o mercado. Nunca comece pelo preço do concorrente."
   },
   {
-    topic: "💰 Precificação",
-    scenario: "Decisão sob pressão",
-    text: "Um lojista pergunta: "Meu concorrente está 10 reais mais barato. Devo baixar meu preço agora ou vou perder todas as vendas?" Como você orienta?",
-    context: "O lojista está em modo de pânico e quer uma resposta rápida e definitiva.",
+    profile: "🔧 Perfil Técnico",
+    scenario: "Estratégia de precificação dinâmica",
+    text: "Lojista avançado: 'Quero implementar precificação dinâmica ajustando preço conforme concorrência. A Shopee permite e como faço isso?'",
+    context: "O lojista tem experiência em e-commerce e quer usar estratégia sofisticada de preço.",
     options: [
-      { text: "Diz para baixar o preço imediatamente para não perder clientes.", correct: false },
-      { text: "Orienta que a decisão de preço depende da margem, do posicionamento e do diferencial do produto — e que cortar preço sem análise pode ser prejudicial.", correct: true },
-      { text: "Diz que ele deveria aumentar o preço para parecer premium.", correct: false },
-      { text: "Pede para ele aguardar 24h antes de tomar qualquer decisão.", correct: false }
+      { text: "Diz que precificação dinâmica não é permitida na Shopee.", correct: false },
+      { text: "Confirma que é possível via atualização manual ou integração com ferramentas de repricing por API, explica as regras de frequência de atualização e alerta sobre cuidados para não cair em 'preço irregular'.", correct: true },
+      { text: "Recomenda apenas acompanhar o concorrente manualmente.", correct: false },
+      { text: "Diz que a Shopee faz isso automaticamente sem necessidade de configuração.", correct: false },
+      { text: "Sugere manter preço fixo para evitar complicações.", correct: false }
     ],
-    feedbackCorrect: "Muito bem! Você evitou dar uma resposta impulsiva e ajudou o lojista a pensar estrategicamente, não apenas reativo.",
-    feedbackWrong: "Baixar preço sem análise pode destruir margem. Um bom assistente ajuda o lojista a pensar antes de agir.",
-    tip: "Ajude o lojista a calcular: "Se você baixar R$10, quantas unidades a mais precisa vender para manter a mesma receita?" Esse cálculo simples muda totalmente a perspectiva."
+    feedbackCorrect: "Perfeito! Você tratou a pergunta com a profundidade que o perfil técnico exige e ainda alertou sobre os riscos — visão completa.",
+    feedbackWrong: "Perfis técnicos esperam respostas completas que incluam tanto o 'como fazer' quanto as limitações e riscos envolvidos.",
+    tip: "Com perfis técnicos, sempre inclua: O que é possível + Como fazer + O que cuidar. Essa estrutura mostra domínio do tema."
   },
   {
-    topic: "💰 Precificação",
-    scenario: "Dúvida técnica inesperada",
-    text: "Lojista: "O sistema está mostrando que meu preço está 'irregular'. O que isso significa e o que faço?" Como você explica?",
-    context: "O lojista não sabe o que significa 'preço irregular' na plataforma e está preocupado.",
+    profile: "🙋 Perfil Leigo",
+    scenario: "Confusão sobre desconto e preço original",
+    text: "Lojista: 'Posso colocar um preço original alto e dar um desconto enorme pra parecer mais barato?'",
+    context: "O lojista quer usar a percepção de desconto sem entender as regras da plataforma.",
+    options: [
+      { text: "Confirma que é uma boa estratégia de marketing.", correct: false },
+      { text: "Explica que a Shopee verifica o histórico de preço para validar descontos — inflar o preço original para criar desconto falso pode resultar em penalização ou remoção do produto.", correct: true },
+      { text: "Diz que pode colocar qualquer preço original sem restrições.", correct: false },
+      { text: "Sugere que ele coloque desconto de 1% para não chamar atenção.", correct: false },
+      { text: "Diz que todos os lojistas fazem isso e não tem problema.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você educou o lojista sobre a política real da plataforma e evitou que ele cometesse um erro que poderia penalizá-lo.",
+    feedbackWrong: "Permitir inflação de preço para criar desconto falso protege o lojista no curto prazo, mas o coloca em risco de penalização.",
+    tip: "Quando o cliente sugere algo que pode gerar penalização, explique o risco antes de dizer 'não': 'Isso pode funcionar uma vez, mas a plataforma verifica o histórico e pode penalizar.'"
+  },
+  {
+    profile: "😰 Perfil Ansioso",
+    scenario: "Concorrente abaixou o preço",
+    text: "Lojista: 'Meu concorrente acabou de abaixar o preço R$15 abaixo do meu. Devo abaixar agora antes de perder todas as vendas?'",
+    context: "O lojista está em pânico e quer agir imediatamente sem analisar o impacto na margem.",
+    options: [
+      { text: "Confirma que deve abaixar imediatamente para não perder mercado.", correct: false },
+      { text: "Diz que não deve mudar nada e ignorar o concorrente.", correct: false },
+      { text: "Orienta que a decisão depende da margem disponível, do volume atual de vendas e do diferencial do seu produto — e que cortar preço sem análise pode ser mais prejudicial que perder alguns clientes.", correct: true },
+      { text: "Sugere retirar o produto de venda até o concorrente aumentar o preço.", correct: false },
+      { text: "Pede para aguardar 24h antes de qualquer decisão.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você evitou a reação impulsiva e ajudou o lojista a pensar estrategicamente. Isso é diferença entre atendimento e consultoria.",
+    feedbackWrong: "Abaixar preço sem análise pode destruir a margem. Um bom assistente ajuda o lojista a pensar antes de agir por impulso.",
+    tip: "Para ansiosos em modo reativo: 'Antes de abaixar, me responde: se você reduzir R$15, quantas unidades a mais precisa vender para ter a mesma receita?' Esse cálculo muda tudo."
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "Margem e taxa da plataforma",
+    text: "Lojista: 'Qual a taxa exata que a Shopee cobra e como calculo minha margem líquida por produto?'",
+    context: "O lojista quer precisão nos números para calcular rentabilidade real.",
+    options: [
+      { text: "Diz que a taxa é fixa em 10% para todos os produtos.", correct: false },
+      { text: "Explica que as taxas variam por categoria (comissão + taxa de pagamento + taxa de frete em algumas modalidades) e orienta a usar o simulador de rentabilidade da central do lojista.", correct: true },
+      { text: "Diz que não é possível calcular com precisão.", correct: false },
+      { text: "Recomenda usar uma margem de 30% como padrão.", correct: false },
+      { text: "Manda o link de termos e condições sem mais explicações.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você deu a resposta correta com precisão: as taxas variam, e o simulador é a ferramenta certa para esse cálculo.",
+    feedbackWrong: "Taxas na Shopee não são fixas — variam por categoria. Dar uma resposta genérica para um lojista técnico gera descrédito.",
+    tip: "Com perfis técnicos que perguntam sobre números, sempre redirecione para a ferramenta oficial (simulador de rentabilidade) e explique o que cada componente representa."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Preço irregular no sistema",
+    text: "Lojista: 'O sistema está mostrando que meu preço está irregular e minhas vendas pararam! O que raios significa isso?'",
+    context: "O lojista está com produto pausado e não entende o motivo. Está perdendo vendas.",
     options: [
       { text: "Diz que é um bug e para não se preocupar.", correct: false },
-      { text: "Explica que preço irregular pode indicar que o produto está acima do teto ou abaixo do piso permitido pela plataforma, ou que há inconsistência entre variações, e orienta como corrigir.", correct: true },
-      { text: "Manda o link da central de ajuda sem mais explicações.", correct: false },
-      { text: "Pede para ele deletar o produto e recadastrar.", correct: false }
+      { text: "Valida a urgência, explica que preço irregular pode indicar inconsistência entre variações ou que o preço está fora do range permitido em campanhas, e orienta como corrigir passo a passo.", correct: true },
+      { text: "Manda o link da central de ajuda sem explicar nada.", correct: false },
+      { text: "Pede para ele deletar o produto e recadastrar.", correct: false },
+      { text: "Diz que o suporte técnico vai analisar em 5 dias úteis.", correct: false }
     ],
-    feedbackCorrect: "Perfeito! Você trouxe clareza técnica em linguagem simples e deu o próximo passo ao lojista.",
-    feedbackWrong: "O lojista precisa entender o que aconteceu e o que fazer — não apenas receber um link ou uma negação do problema.",
-    tip: "Sempre que explicar um erro ou alerta da plataforma, use: 1) O que significa, 2) Por que acontece, 3) Como corrigir. Esse roteiro simples torna qualquer explicação técnica clara."
+    feedbackCorrect: "Muito bem! Você tratou com urgência, explicou a causa e deu o passo a passo para resolver. Com estressados, solução imediata é o que importa.",
+    feedbackWrong: "Quando vendas pararam, o cliente está em estado de crise. Burocracia e respostas vagas são o pior que você pode fazer.",
+    tip: "Roteiro para erros que pausam produtos: 1) O que significa 2) Por que aconteceu 3) Como corrigir agora. Esse roteiro resolve 80% dos problemas de preço irregular."
   },
   {
-    topic: "💰 Precificação",
-    scenario: "Armadilha de percepção",
-    text: "Um lojista afirma: "Vou colocar meu produto mais caro que a concorrência porque produto caro parece mais qualidade." Como você reage a isso?",
-    context: "O lojista tem uma crença sobre percepção de preço que pode ou não ser válida no contexto dele.",
+    profile: "🙋 Perfil Leigo",
+    scenario: "Dúvida sobre frete grátis",
+    text: "Lojista: 'Se eu oferecer frete grátis, isso sai do meu bolso? Devo incluir no preço do produto?'",
+    context: "O lojista não entende a relação entre frete grátis e precificação e pode estar subcalculando.",
     options: [
-      { text: "Concorda imediatamente e valida a estratégia.", correct: false },
-      { text: "Discorda e pede para baixar o preço.", correct: false },
-      { text: "Valida que precificação premium pode funcionar, mas alerta que precisa estar acompanhada de fotos profissionais, avaliações e descrições que justifiquem o preço.", correct: true },
-      { text: "Diz que na Shopee não funciona estratégia de preço alto.", correct: false }
+      { text: "Diz que frete grátis é pago pela Shopee para o lojista.", correct: false },
+      { text: "Explica que em campanhas de frete grátis a Shopee pode subsidiar parte, mas o lojista deve entender sua participação e incluir o custo no preço quando necessário para manter margem.", correct: true },
+      { text: "Diz que não precisa incluir no preço porque o frete é gratuito.", correct: false },
+      { text: "Recomenda sempre cobrar frete separado para não perder dinheiro.", correct: false },
+      { text: "Diz que depende do produto e não há orientação geral.", correct: false }
     ],
-    feedbackCorrect: "Excelente! Você respeitou a visão do lojista, mas complementou com a realidade do mercado digital. Isso é orientação consultiva de qualidade.",
-    feedbackWrong: "Nem concordar cegamente nem contrariar sem base. Um bom assistente adiciona contexto e ajuda o lojista a tomar a melhor decisão.",
-    tip: "Quando um lojista tem uma crença sobre estratégia, não bata de frente. Valide o que tem de verdade e acrescente o que falta: "Isso pode funcionar quando acompanhado de...""
+    feedbackCorrect: "Perfeito! Você educou o lojista sobre a realidade do frete e evitou que ele ficasse com margem negativa.",
+    feedbackWrong: "Muitos lojistas perdem dinheiro por não entender como o frete grátis impacta a margem. Isso precisa ser explicado com clareza.",
+    tip: "Frete grátis não é gratuito para o lojista em todos os casos. Sempre pergunte: 'Você já calculou seu preço incluindo o custo do frete?' Evita surpresas dolorosas."
   },
   {
-    topic: "📣 Central de Marketing",
-    scenario: "Cliente perdido na ferramenta",
-    text: "Lojista: "Tentei criar um voucher mas não achei onde ativar. A Shopee escondeu isso de mim?" Como você responde sem irritar o cliente?",
-    context: "O lojista está frustrado com a usabilidade da plataforma e usando linguagem de acusação.",
+    profile: "😰 Perfil Ansioso",
+    scenario: "Vendas caindo após ajuste de preço",
+    text: "Lojista: 'Aumentei o preço R$5 há 3 dias e as vendas caíram 60%. Já errei? Volto para o preço anterior?'",
+    context: "O lojista está em pânico achando que tomou uma decisão errada.",
+    options: [
+      { text: "Confirma que o aumento foi errado e deve reverter imediatamente.", correct: false },
+      { text: "Diz que 3 dias é pouco e que ele precisa esperar 30 dias.", correct: false },
+      { text: "Orienta que uma queda em 3 dias pode ter outras causas (sazonalidade, algoritmo, concorrência), mas se os dados confirmarem que é o preço, a decisão de reverter depende da margem e do posicionamento desejado.", correct: true },
+      { text: "Pede para ele fazer um desconto extra para compensar a queda.", correct: false },
+      { text: "Sugere retirar o produto e recadastrar com o preço antigo.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você não entrou no pânico com o cliente, orientou a análise de causa antes de uma decisão e deu uma perspectiva estratégica real.",
+    feedbackWrong: "Três dias de queda podem ter várias causas. Sempre oriente analisar antes de reverter precipitadamente.",
+    tip: "Com ansiosos sobre resultados, sempre separe correlação de causalidade: 'A queda pode ser pelo preço, mas vamos checar o que mais mudou nesses 3 dias.'"
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "Elasticidade de preço",
+    text: "Lojista: 'Quero testar elasticidade de preço no meu produto. Qual metodologia você recomenda para fazer isso na Shopee?'",
+    context: "O lojista tem mentalidade de dados e quer conduzir testes controlados de precificação.",
+    options: [
+      { text: "Diz que não é possível testar isso na Shopee.", correct: false },
+      { text: "Recomenda fazer apenas variações de preço de 50% para ver diferença clara.", correct: false },
+      { text: "Orienta criar variações de preço de 5-10%, medir conversão e receita por janelas de 7 dias, controlar por sazonalidade e usar o relatório de desempenho do produto para análise comparativa.", correct: true },
+      { text: "Sugere alterar o preço todo dia até encontrar o melhor resultado.", correct: false },
+      { text: "Diz que é melhor contratar uma agência para fazer esse tipo de análise.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você apresentou uma metodologia real, controlada e viável na plataforma. Exatamente o que um perfil analítico precisa.",
+    feedbackWrong: "Perfis técnicos que falam em elasticidade precisam de metodologia, não de respostas genéricas. Mostre que você entende de testes controlados.",
+    tip: "Para testes de preço: mudança pequena (5-10%) + janela fixa (7 dias) + controle de variáveis externas = dado confiável. Essa estrutura básica serve para qualquer produto."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Percepção de preço premium",
+    text: "Lojista: 'Tenho um produto premium mas os clientes só reclamam que está caro. Fico recebendo avaliações negativas sobre preço. Que situação!!'",
+    context: "O lojista está frustrado com avaliações sobre preço e sente que o produto não é valorizado.",
+    options: [
+      { text: "Sugere abaixar o preço para eliminar as reclamações.", correct: false },
+      { text: "Diz que avaliações negativas sobre preço são normais e ele deve ignorar.", correct: false },
+      { text: "Explica que reclamações de preço frequentes podem indicar que a ficha do produto não está comunicando bem o valor — fotos, descrição e diferenciais precisam justificar o preço antes do cliente chegar à avaliação.", correct: true },
+      { text: "Recomenda responder cada avaliação dizendo que o preço é justo.", correct: false },
+      { text: "Sugere criar um cupom de desconto secreto para quem reclamar.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você identificou a causa raiz: o produto não está comunicando valor. A solução é na ficha, não no preço.",
+    feedbackWrong: "Reclamações de preço repetidas indicam falha de comunicação de valor, não necessariamente preço alto. A solução está na ficha, não no desconto.",
+    tip: "Quando há reclamações frequentes de preço, pergunte: 'O que a ficha do produto comunica sobre por que ele vale esse valor?' A resposta revela o problema real."
+  }
+],
+
+/* ======================== CENTRAL DE MARKETING ======================== */
+marketing: [
+  {
+    profile: "🙋 Perfil Leigo",
+    scenario: "Primeira campanha",
+    text: "Lojista: 'O que é voucher e como ele funciona? Nunca usei e não sei por onde começar.'",
+    context: "O lojista é iniciante e quer entender o básico antes de criar qualquer promoção.",
+    options: [
+      { text: "Manda o link do tutorial sem explicar nada.", correct: false },
+      { text: "Explica que voucher é um código ou desconto automático que o comprador usa no checkout — e que o lojista define o valor, validade e condições, como pedido mínimo.", correct: true },
+      { text: "Diz que voucher é igual a frete grátis.", correct: false },
+      { text: "Diz que só é possível criar voucher durante campanhas da Shopee.", correct: false },
+      { text: "Recomenda começar com 50% de desconto para atrair clientes.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você explicou o conceito de forma simples, prática e completa — exatamente o que um leigo precisa para começar.",
+    feedbackWrong: "Leigos precisam de explicação do conceito antes de qualquer ação. Tutorials e links sem contexto não ajudam quem não sabe o básico.",
+    tip: "Para leigos absolutos, sempre comece com: 'O que é + como funciona + um exemplo prático.' Três partes que transformam qualquer conceito em algo aplicável."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Voucher não funcionando",
+    text: "Lojista irritado: 'Tentei criar um voucher mas não achei onde ativar. A Shopee escondeu isso de mim de propósito?'",
+    context: "O lojista está frustrado com a usabilidade e usando linguagem de acusação contra a plataforma.",
     options: [
       { text: "Diz que ele está errado e que é fácil achar.", correct: false },
       { text: "Reconhece que a interface pode ser confusa, guia passo a passo por onde criar e ativar o voucher e confirma se funcionou.", correct: true },
       { text: "Manda o link do tutorial sem interação adicional.", correct: false },
-      { text: "Diz que precisa de uma captura de tela antes de ajudar.", correct: false }
+      { text: "Diz que precisa de uma captura de tela antes de ajudar.", correct: false },
+      { text: "Defende a Shopee dizendo que a interface é intuitiva.", correct: false }
     ],
-    feedbackCorrect: "Muito bem! Você acolheu a frustração sem validar a acusação, e guiou o cliente com empatia.",
+    feedbackCorrect: "Muito bem! Você acolheu a frustração sem validar a acusação, e guiou o cliente com empatia e ação concreta.",
     feedbackWrong: "Nunca confronte o cliente sobre sua dificuldade. Oriente com empatia, passo a passo. A experiência positiva é o que importa.",
-    tip: "Quando o cliente diz que "não achou" algo, evite "é fácil" ou "está bem visível" — isso invalida a experiência dele. Prefira: "Deixa eu te mostrar o caminho exato!""
+    tip: "Quando o cliente diz que 'não achou' algo, evite 'é fácil' — isso invalida a experiência dele. Prefira: 'Deixa eu te mostrar o caminho exato!'"
   },
   {
-    topic: "📣 Central de Marketing",
-    scenario: "Expectativa de resultado",
-    text: "Lojista: "Criei um voucher de 20% OFF mas não vendeu nada. A promoção não funciona?" O que você diz?",
+    profile: "😰 Perfil Ansioso",
+    scenario: "Voucher sem resultado",
+    text: "Lojista: 'Criei um voucher de 20% OFF há 4 dias mas não vendeu nada. A promoção está quebrada ou fiz algo errado?'",
     context: "O lojista não entende que voucher sozinho não atrai tráfego.",
     options: [
       { text: "Concorda que a promoção pode estar com bug.", correct: false },
-      { text: "Explica que vouchers precisam de divulgação — para o cliente saber que existe. E sugere combinar com ADS, feed de produto e participação em campanhas da Shopee.", correct: true },
       { text: "Diz que 20% OFF é pouco e aumentar o desconto resolve.", correct: false },
-      { text: "Recomenda deletar o voucher e criar outro.", correct: false }
+      { text: "Explica que voucher precisa de divulgação para que o cliente saiba que existe — e sugere combinar com ADS, feed de produto e participação em campanhas da Shopee.", correct: true },
+      { text: "Recomenda deletar o voucher e criar outro.", correct: false },
+      { text: "Diz que ele deveria ter esperado uma data comemorativa para criar o voucher.", correct: false }
     ],
-    feedbackCorrect: "Perfeito! Você educou o lojista sobre o ecossistema de marketing e deu soluções complementares.",
+    feedbackCorrect: "Perfeito! Você educou o lojista sobre o ecossistema de marketing e deu soluções complementares práticas.",
     feedbackWrong: "Voucher sem divulgação é uma promo invisível. O lojista precisa entender que marketing é um conjunto de ações, não uma bala de prata.",
-    tip: "Use a metáfora da vitrine: "Criar um voucher sem divulgação é como colocar uma placa de promoção numa loja fechada. O desconto existe, mas ninguém sabe." Isso esclarece na hora."
+    tip: "Use a metáfora: 'Criar um voucher sem divulgar é colocar placa de promoção numa loja fechada.' Simples e esclarece na hora."
   },
   {
-    topic: "📣 Central de Marketing",
-    scenario: "Reclamação de campanha",
-    text: "Lojista irritado: "Participei da campanha do Shopee Birthday mas meu produto não ficou no banner. Fui preterido por lojistas maiores?" Como você lida?",
+    profile: "🔧 Perfil Técnico",
+    scenario: "Segmentação de voucher",
+    text: "Lojista: 'Posso criar vouchers segmentados por tipo de cliente — novos compradores versus recorrentes? Como configuro isso?'",
+    context: "O lojista quer usar segmentação avançada para maximizar o ROI das promoções.",
+    options: [
+      { text: "Diz que não é possível segmentar por tipo de cliente.", correct: false },
+      { text: "Confirma que é possível configurar vouchers exclusivos para primeiros pedidos ('novo comprador') ou para clientes recorrentes via ferramenta de fidelização, e explica onde configurar.", correct: true },
+      { text: "Diz que todos os vouchers valem para todos os clientes.", correct: false },
+      { text: "Sugere criar descontos diferentes mas sem segmentação.", correct: false },
+      { text: "Recomenda usar o mesmo voucher para todos e ajustar depois.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você confirmou a funcionalidade e deu o caminho técnico correto — exatamente o que o perfil técnico precisava.",
+    feedbackWrong: "Segmentação de voucher é uma funcionalidade real da Shopee. Perfis técnicos esperam respostas precisas e completas.",
+    tip: "Com perfis técnicos que perguntam sobre funcionalidades específicas, sempre confirme se existe, mostre onde fica e complemente com um caso de uso prático."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Campanha sem resultado no banner",
+    text: "Lojista: 'Participei da campanha do Shopee Birthday mas meu produto não ficou no banner. Fui preterido por lojistas maiores?'",
     context: "O lojista sente que há favoritismo. É uma situação delicada e emocional.",
     options: [
-      { text: "Confirma que há mesmo preferência por grandes lojistas.", correct: false },
+      { text: "Confirma que há preferência por grandes lojistas.", correct: false },
       { text: "Nega qualquer critério de seleção.", correct: false },
-      { text: "Reconhece a frustração, explica que a curadoria tem critérios como avaliação do produto, histórico de vendas e qualidade da ficha, e orienta como se preparar melhor para próximas campanhas.", correct: true },
-      { text: "Diz que ele deveria ter lido as regras antes de participar.", correct: false }
+      { text: "Reconhece a frustração, explica que a curadoria tem critérios como avaliação do produto, histórico de vendas e qualidade da ficha — e orienta como se preparar melhor para próximas campanhas.", correct: true },
+      { text: "Diz que ele deveria ter lido as regras antes de participar.", correct: false },
+      { text: "Promete que na próxima campanha será selecionado.", correct: false }
     ],
-    feedbackCorrect: "Excelente! Você validou o sentimento, explicou os critérios com transparência e deu um caminho construtivo.",
-    feedbackWrong: "Em situações emocionais, validar o sentimento vem primeiro. Só depois vem a explicação racional.",
-    tip: "Fórmula para situações emocionais: 1) "Entendo sua frustração..." 2) Explique os critérios objetivos 3) Ofereça um próximo passo positivo. Essa sequência transforma reclamação em oportunidade."
+    feedbackCorrect: "Excelente! Você validou o sentimento, explicou os critérios com transparência e deu um caminho construtivo para o futuro.",
+    feedbackWrong: "Em situações emocionais, validar o sentimento vem primeiro. Só depois a explicação racional tem espaço para ser ouvida.",
+    tip: "Fórmula para situações emocionais: 1) 'Entendo sua frustração...' 2) Critérios objetivos 3) Próximo passo positivo. Essa sequência transforma reclamação em oportunidade."
   },
   {
-    topic: "🤝 Afiliados",
-    scenario: "Dúvida básica com desconfiança",
-    text: "Um criador de conteúdo pergunta: "Esse programa de afiliados é sério ou vou ficar trabalhando de graça?" Como você transmite credibilidade?",
-    context: "A pessoa tem desconfiança legítima — já foi enganada por outros programas.",
+    profile: "🙋 Perfil Leigo",
+    scenario: "Diferença entre promoções",
+    text: "Lojista: 'Qual a diferença entre Flash Sale, Combo e Voucher? Quando uso cada um?'",
+    context: "O lojista está confuso com as várias ferramentas de promoção disponíveis.",
+    options: [
+      { text: "Diz que todos são iguais e geram desconto.", correct: false },
+      { text: "Explica cada um com exemplos: Flash Sale cria urgência por tempo limitado, Combo agrupa produtos para aumentar ticket, Voucher dá desconto condicional — e orienta quando cada um faz mais sentido.", correct: true },
+      { text: "Recomenda usar os três juntos para o máximo de resultado.", correct: false },
+      { text: "Diz que deve escolher um e testar por 30 dias.", correct: false },
+      { text: "Manda o link da central de ajuda com os tutoriais.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você usou exemplos práticos para diferenciar as ferramentas e deu orientação de quando usar cada uma. Isso é educação consultiva.",
+    feedbackWrong: "Leigos com muitas opções ficam paralisados. A melhor resposta diferencia com exemplos práticos e dá uma recomendação direcional.",
+    tip: "Quando o cliente tem muitas opções e não sabe por onde começar, simplifique: 'Se você quer urgência, use Flash Sale. Se quer aumentar ticket médio, use Combo.' Direto ao ponto."
+  },
+  {
+    profile: "😰 Perfil Ansioso",
+    scenario: "Promoção durante campanha grande",
+    text: "Lojista: 'É o 11.11 daqui a 10 dias e ainda não cadastrei nada. Já perdi minha chance ou ainda dá tempo de fazer algo?'",
+    context: "O lojista está em pânico por se sentir atrasado para a maior campanha do ano.",
+    options: [
+      { text: "Confirma que ele perdeu a chance e deve se preparar para o próximo ano.", correct: false },
+      { text: "Diz que qualquer coisa que ele fizer agora não vai funcionar.", correct: false },
+      { text: "Tranquiliza: 10 dias é tempo suficiente para configurar vouchers, ativar flash sales e otimizar fichas. Orienta quais ações têm maior impacto em menos tempo.", correct: true },
+      { text: "Recomenda não participar para não correr riscos.", correct: false },
+      { text: "Diz que a Shopee vai fazer tudo automaticamente para ele.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você transformou o pânico em plano de ação concreto, priorizando as ações de maior impacto. Isso é suporte de excelência.",
+    feedbackWrong: "Com ansiosos sobre prazo, nunca confirme a catástrofe que eles estão imaginando. Devolva o senso de controle com um plano.",
+    tip: "Com prazos apertados, use sempre: 'Com X dias, aqui está o que você pode fazer:' seguido de uma lista priorizada. Urgência com clareza vira energia, não pânico."
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "ROI de campanha de voucher",
+    text: "Lojista: 'Como calculo o ROI real de uma campanha de vouchers, considerando que alguns clientes comprariam mesmo sem o desconto?'",
+    context: "O lojista quer medir o impacto incremental real da promoção, não apenas o volume bruto.",
+    options: [
+      { text: "Diz que não é possível medir ROI de vouchers com precisão.", correct: false },
+      { text: "Orienta comparar vendas do período com e sem voucher, controlar por histórico de comportamento dos compradores e usar o relatório de análise de voucher da plataforma para estimar incrementalidade.", correct: true },
+      { text: "Recomenda calcular apenas receita gerada dividida pelo desconto dado.", correct: false },
+      { text: "Diz que qualquer venda durante a campanha deve ser contada como resultado do voucher.", correct: false },
+      { text: "Sugere contratar uma consultoria para fazer essa análise.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você tratou o conceito de incrementalidade com seriedade e deu uma metodologia real e viável na plataforma.",
+    feedbackWrong: "A pergunta é sobre incrementalidade — um conceito avançado de marketing. Responder de forma superficial desrespeita a inteligência do perfil técnico.",
+    tip: "Quando alguém pergunta sobre ROI incremental, eles já sabem que nem toda venda durante uma promoção é 'causada' por ela. Reconheça isso antes de propor a metodologia."
+  },
+  {
+    profile: "🙋 Perfil Leigo",
+    scenario: "Participação em campanha da Shopee",
+    text: "Lojista: 'Como faço para participar das campanhas grandes da Shopee como 9.9 e 11.11? Preciso ser convidado?'",
+    context: "O lojista não sabe que pode se inscrever nas campanhas e acha que é por convite.",
+    options: [
+      { text: "Confirma que é necessário ser convidado pela Shopee.", correct: false },
+      { text: "Explica que a maioria das campanhas tem um período de inscrição acessível para todos os lojistas elegíveis, e orienta onde encontrar a lista de campanhas abertas e os critérios de participação.", correct: true },
+      { text: "Diz que as campanhas grandes são apenas para lojistas grandes.", correct: false },
+      { text: "Recomenda que ele espere ser contactado pelo gerente de conta.", correct: false },
+      { text: "Diz que ele precisa ter pelo menos 100 avaliações antes de participar.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você desconstruiu a crença errada do lojista e mostrou o caminho correto para participar. Isso abre oportunidades reais para ele.",
+    feedbackWrong: "Muitos lojistas perdem campanhas por não saberem que podem se inscrever. Esclarecer isso tem impacto direto nos negócios deles.",
+    tip: "Sempre que um lojista tiver uma crença errada que o impede de crescer, corrija com gentileza e abra o caminho: 'Na verdade, qualquer lojista elegível pode participar...'"
+  },
+  {
+    profile: "😰 Perfil Ansioso",
+    scenario: "Medo de dar desconto demais",
+    text: "Lojista: 'Tenho medo de configurar o voucher errado e acabar dando 70% de desconto sem querer e perder dinheiro.'",
+    context: "O lojista quer criar promoções mas tem medo de cometer erros de configuração.",
+    options: [
+      { text: "Diz que isso já aconteceu com outros lojistas e é perigoso.", correct: false },
+      { text: "Confirma que o sistema tem salvaguardas, orienta a conferir sempre preview do desconto antes de ativar e a configurar um teto máximo de desconto por pedido.", correct: true },
+      { text: "Recomenda não usar vouchers para evitar o risco.", correct: false },
+      { text: "Diz que o sistema detecta automaticamente e cancela descontos errados.", correct: false },
+      { text: "Pede para ele fazer um pedido de teste antes de ativar.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você devolveu o senso de controle ao lojista com passos concretos de verificação antes de ativar. Isso é suporte que gera confiança.",
+    feedbackWrong: "Com ansiosos sobre erros de configuração, nunca amplifique o medo. Mostre as salvaguardas e os passos de verificação disponíveis.",
+    tip: "Para ansiosos sobre erros técnicos: 'Antes de ativar, sempre faça o preview — o sistema mostra exatamente como o cliente vai ver o desconto.' Isso derruba a ansiedade."
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "Estratégia de cupom de fidelização",
+    text: "Lojista: 'Quero criar uma régua de relacionamento com cupons automatizados — comprou pela 1ª vez, cupom de retorno; comprou 3 vezes, cupom de VIP. Isso é possível?'",
+    context: "O lojista quer implementar automação de marketing de relacionamento.",
+    options: [
+      { text: "Diz que automação de marketing não existe na Shopee.", correct: false },
+      { text: "Explica que é possível via a ferramenta de Marketing de Relacionamento na Central de Marketing, onde é possível criar campanhas segmentadas por comportamento de compra e configura cada nível.", correct: true },
+      { text: "Recomenda fazer isso manualmente pelo chat.", correct: false },
+      { text: "Sugere apenas um cupom único para todos os clientes.", correct: false },
+      { text: "Diz que apenas lojistas com plano Premium têm acesso a essa funcionalidade.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você confirmou a funcionalidade, indicou onde fica e deu contexto sobre como configurar cada nível da régua.",
+    feedbackWrong: "Marketing de relacionamento segmentado é uma funcionalidade real da Central de Marketing. Perfis técnicos merecem respostas precisas.",
+    tip: "Com perfis técnicos que propõem estratégias avançadas, sempre valide o que é possível, onde configurar e acrescente uma dica de boas práticas. Essa estrutura demonstra domínio."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Flash sale que falhou",
+    text: "Lojista: 'Meu Flash Sale começou e o preço não foi atualizado para todos os clientes. Alguns compraram pelo preço cheio e estão reclamando. Isso é uma bagunça!'",
+    context: "O lojista está em crise com uma inconsistência durante uma promoção ativa.",
+    options: [
+      { text: "Diz que a culpa é do lojista por configurar errado.", correct: false },
+      { text: "Pede calma e diz que vai investigar sem dar prazo.", correct: false },
+      { text: "Reconhece a gravidade, orienta pausar o Flash Sale imediatamente, verifica se o produto estava dentro das condições corretas, e escala para suporte técnico com print das compras afetadas.", correct: true },
+      { text: "Recomenda oferecer reembolso para todos os clientes sem investigar.", correct: false },
+      { text: "Diz que é uma inconsistência conhecida e será corrigida em 48h.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você agiu com urgência, deu ações concretas imediatas e escalou para o canal certo. Com crises ativas, velocidade e clareza são tudo.",
+    feedbackWrong: "Em crises de promoção ativa, a primeira ação é conter o dano. Pausar + investigar + escalar é o fluxo correto.",
+    tip: "Para crises durante promoções ativas: 1) Pause o que está causando dano 2) Documente o que aconteceu 3) Escale com evidências. Ordem salva clientes e resolve mais rápido."
+  }
+],
+
+/* ======================== AFILIADOS ======================== */
+afiliados: [
+  {
+    profile: "🙋 Perfil Leigo",
+    scenario: "Primeira dúvida sobre afiliados",
+    text: "Criador de conteúdo: 'O que é o programa de afiliados? Nunca ouvi falar disso na Shopee.'",
+    context: "O criador de conteúdo não sabe nada sobre o programa e está descobrindo pela primeira vez.",
+    options: [
+      { text: "Manda o link de cadastro sem explicar nada.", correct: false },
+      { text: "Explica que afiliados promovem produtos da Shopee pelos seus canais (Instagram, YouTube, TikTok) e recebem comissão por cada venda gerada pelo link personalizado.", correct: true },
+      { text: "Diz que é como ser funcionário da Shopee.", correct: false },
+      { text: "Diz que precisa de pelo menos 10.000 seguidores para participar.", correct: false },
+      { text: "Compara com MLM dizendo que precisa recrutar outras pessoas.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você explicou o conceito de forma simples e clara, com exemplos de canais reais. Isso é orientação que abre portas.",
+    feedbackWrong: "Para um leigo absoluto, o conceito precisa ser explicado do zero, com exemplos do cotidiano. Links sem contexto não ajudam.",
+    tip: "Ao explicar afiliados para iniciantes, use o exemplo do cotidiano: 'Você indica um produto para um seguidor, ele compra pelo seu link, você ganha uma comissão.' Um ciclo simples e claro."
+  },
+  {
+    profile: "😰 Perfil Ansioso",
+    scenario: "Medo de não receber",
+    text: "Criador: 'Esse programa de afiliados é sério ou vou ficar trabalhando de graça? Já fui enganado por outros programas.'",
+    context: "O criador tem desconfiança legítima com base em experiências anteriores negativas.",
     options: [
       { text: "Garante que vai ganhar muito dinheiro sem dar detalhes.", correct: false },
-      { text: "Explica com clareza como a comissão funciona, quando é paga, como acompanhar os ganhos e qual o suporte disponível — sem prometer resultados exagerados.", correct: true },
+      { text: "Explica com clareza como a comissão funciona, quando é paga, como acompanhar os ganhos no painel e qual o suporte disponível — sem prometer resultados exagerados.", correct: true },
       { text: "Diz que todos os afiliados ganham bem e manda cases de sucesso.", correct: false },
-      { text: "Pede para ele ler os termos e condições antes de qualquer explicação.", correct: false }
+      { text: "Pede para ele ler os termos e condições antes de qualquer explicação.", correct: false },
+      { text: "Diz que não pode garantir nada e que depende da sorte.", correct: false }
     ],
     feedbackCorrect: "Muito bem! Você construiu credibilidade com transparência e informação concreta — não com promessas vazias.",
-    feedbackWrong: "Prometer ganhos sem base ou ser evasivo sobre como funciona aumenta a desconfiança. Credibilidade vem de clareza.",
-    tip: "Com quem desconfia, o antídoto é transparência radical. Explique o processo completo, inclusive as limitações. Quem é honesto sobre o "pode não funcionar para todos" ganha muito mais confiança."
+    feedbackWrong: "Com quem desconfia, o antídoto é transparência. Explicar o processo completo, inclusive limitações, gera mais confiança que promessas.",
+    tip: "Com quem já foi enganado, a credibilidade vem de honestidade: 'Não posso garantir quanto você vai ganhar, mas posso te mostrar exatamente como funciona o pagamento.' Isso diferencia."
   },
   {
-    topic: "🤝 Afiliados",
-    scenario: "Problema de rastreamento",
-    text: "Afiliado: "Fiz 30 vendas esse mês pelo meu link mas só apareceram 12 no meu painel. Cadê as outras?" Como você investiga e responde?",
+    profile: "😤 Perfil Estressado",
+    scenario: "Comissão abaixo do esperado",
+    text: "Afiliado: 'Fiz 50 indicações esse mês e minha comissão foi ridícula! Muito menos que eu esperava. O que está acontecendo?'",
+    context: "O afiliado está frustrado com o rendimento e suspeita de erro no sistema.",
+    options: [
+      { text: "Diz que 50 indicações não é muita coisa e o resultado é esperado.", correct: false },
+      { text: "Concorda que o sistema pode ter errado e abre chamado sem investigar.", correct: false },
+      { text: "Valida a preocupação, explica que comissão depende de vendas concluídas (não apenas cliques), taxa de conversão do produto e taxa de comissão por categoria — e orienta a analisar o relatório detalhado.", correct: true },
+      { text: "Diz que ele precisa ter mais seguidores para ganhar mais.", correct: false },
+      { text: "Pede para aguardar o fechamento do mês seguinte.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você não invalidou a frustração, mas trouxe clareza técnica sobre como a comissão é calculada. Isso educa e resolve.",
+    feedbackWrong: "Estressados com questões financeiras precisam de clareza imediata. Explique como a comissão é calculada antes de assumir erro ou validar a frustração.",
+    tip: "Com afiliados frustrados com ganhos: mostre a diferença entre indicações (cliques) e conversões (vendas). Muitos confundem os dois e aí a expectativa fica distorcida."
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "Tracking e atribuição",
+    text: "Afiliado avançado: 'Como funciona a janela de atribuição do meu link? Se o cliente clicou e comprou 10 dias depois, eu ganho comissão?'",
+    context: "O afiliado tem conhecimento de marketing digital e quer entender a mecânica de atribuição.",
+    options: [
+      { text: "Diz que qualquer compra após o clique gera comissão para sempre.", correct: false },
+      { text: "Explica que existe uma janela de cookie de atribuição (geralmente 7 dias), após a qual o clique não é mais atribuído — e orienta como consultar a política exata no painel de afiliado.", correct: true },
+      { text: "Diz que a atribuição é sempre do último clique antes da compra.", correct: false },
+      { text: "Diz que a Shopee não usa cookies e a atribuição é por conta da plataforma.", correct: false },
+      { text: "Recomenda não se preocupar com isso pois o sistema é automaticamente justo.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você explicou o conceito de janela de atribuição com precisão e indicou onde confirmar a política exata. Exatamente o que o perfil técnico precisa.",
+    feedbackWrong: "Janela de atribuição é um conceito crítico para afiliados que querem entender seus ganhos. Respostas vagas não servem para perfis técnicos.",
+    tip: "Para perguntas técnicas sobre atribuição, sempre explique: 1) O que é a janela de cookie 2) Qual a duração padrão 3) Onde consultar a política oficial. Essa estrutura mostra domínio."
+  },
+  {
+    profile: "🙋 Perfil Leigo",
+    scenario: "Criação do link de afiliado",
+    text: "Criador: 'Como gero meu link de afiliado? Tem que ser um link diferente para cada produto?'",
+    context: "O criador está começando e não sabe como funciona a geração de links.",
+    options: [
+      { text: "Diz que existe apenas um link para todos os produtos.", correct: false },
+      { text: "Explica que cada produto tem seu próprio link de afiliado gerado no painel, que é o mesmo produto mas com rastreamento personalizado — e mostra o caminho para gerar dentro da plataforma.", correct: true },
+      { text: "Diz que precisa contatar o suporte para cada link.", correct: false },
+      { text: "Recomenda usar o link da home da Shopee para ganhar comissão de tudo.", correct: false },
+      { text: "Diz que o link é gerado automaticamente ao compartilhar qualquer produto.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você explicou o conceito de link por produto com clareza e mostrou onde gerar. Isso é o que um iniciante precisa para dar o primeiro passo.",
+    feedbackWrong: "Leigos que querem começar precisam saber o básico operacional: onde clicar, o que fazer, qual o resultado. Respostas imprecisas travam o início.",
+    tip: "Para orientar a geração de links, use a sequência: 'Acessa o produto → clica em Compartilhar → seleciona Link de Afiliado.' Passo a passo visual é melhor que qualquer explicação."
+  },
+  {
+    profile: "😰 Perfil Ansioso",
+    scenario: "Audiência pequena",
+    text: "Afiliado iniciante: 'Tenho só 500 seguidores no Instagram. Consigo ganhar alguma coisa ou só quem tem muito seguidor ganha?'",
+    context: "O afiliado está inseguro sobre suas chances com uma audiência pequena.",
+    options: [
+      { text: "Diz que com 500 seguidores é difícil e ele deveria esperar crescer mais.", correct: false },
+      { text: "Explica que engajamento importa mais que tamanho da audiência, e orienta sobre nichos, consistência e como escolher produtos alinhados ao perfil do público.", correct: true },
+      { text: "Garante que vai ganhar muito mesmo com poucos seguidores.", correct: false },
+      { text: "Sugere que ele compre mais seguidores para crescer.", correct: false },
+      { text: "Diz que deve tentar em várias plataformas ao mesmo tempo para compensar.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você motivou com realidade — não com falsa esperança nem com pessimismo. Isso é orientação equilibrada e construtiva.",
+    feedbackWrong: "Desanimar ou prometer resultados sem base são os dois extremos a evitar. O caminho certo é realista e encorajador.",
+    tip: "Dado real que muda perspectiva: micro-influenciadores com nicho definido frequentemente têm taxas de conversão maiores que perfis genéricos com muitos seguidores."
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "Otimização de conversão de links",
+    text: "Afiliado: 'Meus links têm 2.000 cliques mas só 15 conversões — taxa de 0,75%. Quais estratégias posso usar para melhorar isso?'",
+    context: "O afiliado sabe interpretar métricas e quer orientação estratégica e precisa.",
+    options: [
+      { text: "Diz que 0,75% é normal para o programa de afiliados.", correct: false },
+      { text: "Orienta revisar o contexto de divulgação (o link está sendo apresentado antes ou depois do conteúdo persuasivo?), testar diferentes produtos, segmentar o público e analisar quais canais convertem mais.", correct: true },
+      { text: "Recomenda simplesmente criar mais conteúdo para gerar mais cliques.", correct: false },
+      { text: "Sugere trocar os produtos promovidos por outros mais caros.", correct: false },
+      { text: "Diz que conversão depende do produto e ele não tem controle.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você deu um roteiro de otimização focado em variáveis que o afiliado controla. Isso é orientação estratégica de qualidade.",
+    feedbackWrong: "Taxa de conversão baixa tem causas identificáveis. Perfis técnicos esperam diagnóstico e roteiro de otimização, não respostas genéricas.",
+    tip: "Para otimizar conversão de afiliados: contexto antes do link + produto adequado ao público + chamada para ação clara. Esses três elementos respondem por 80% dos resultados."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Divergência de vendas",
+    text: "Afiliado: 'Fiz 30 vendas esse mês pelo meu link mas só apareceram 12 no meu painel. Cadê as outras 18?'",
     context: "O afiliado está preocupado com perda de comissão. É uma situação financeira sensível.",
     options: [
       { text: "Diz que ele deve ter contado errado.", correct: false },
-      { text: "Valida a preocupação, explica que podem existir cancelamentos, devoluções ou compras feitas sem cookie rastreado, e orienta como abrir um chamado com o período e os pedidos específicos.", correct: true },
+      { text: "Valida a preocupação, explica que podem existir cancelamentos, devoluções ou compras fora da janela de cookie, e orienta como abrir chamado com o período e os pedidos específicos.", correct: true },
       { text: "Confirma que o sistema tem falhas e vai pagar assim que investigar.", correct: false },
-      { text: "Pede para ele mandar print de todas as 30 vendas para verificar.", correct: false }
+      { text: "Pede para ele mandar print de todas as 30 vendas para verificar.", correct: false },
+      { text: "Diz que divergências de até 20% são normais e esperadas.", correct: false }
     ],
-    feedbackCorrect: "Perfeito! Você não descartou a preocupação, mas também não fez promessas indevidas. Deu o processo correto.",
+    feedbackCorrect: "Perfeito! Você não descartou a preocupação, mas também não fez promessas indevidas. Deu o processo correto de investigação.",
     feedbackWrong: "Nunca descarte uma divergência financeira como erro do cliente. Sempre valide e direcione para investigação formal.",
-    tip: "Em questões financeiras, nunca use "você deve ter contado errado." Prefira: "Vamos investigar juntos." Isso mantém a confiança mesmo quando o resultado não for o esperado."
+    tip: "Em questões financeiras, nunca use 'você deve ter contado errado.' Prefira: 'Vamos investigar juntos.' Isso mantém a confiança mesmo quando o resultado não for o esperado."
   },
   {
-    topic: "🤝 Afiliados",
-    scenario: "Estratégia de crescimento",
-    text: "Afiliado iniciante: "Tenho 500 seguidores no Instagram. Conseguirei ganhar alguma coisa ou só quem tem muito seguidor ganha?" O que você responde?",
-    context: "O afiliado está inseguro sobre suas chances com uma audiência pequena.",
+    profile: "🙋 Perfil Leigo",
+    scenario: "Produtos proibidos para afiliados",
+    text: "Criador: 'Posso promover qualquer produto da Shopee como afiliado ou tem alguma restrição?'",
+    context: "O criador não sabe que existem categorias ou produtos que não participam do programa.",
     options: [
-      { text: "Diz que com 500 seguidores é difícil e ele deveria esperar crescer.", correct: false },
-      { text: "Explica que engajamento importa mais que tamanho da audiência, e orienta sobre nichos, consistência e como escolher produtos alinhados ao perfil do público.", correct: true },
-      { text: "Garante que vai ganhar muito mesmo com poucos seguidores.", correct: false },
-      { text: "Sugere que ele compre mais seguidores para crescer mais rápido.", correct: false }
+      { text: "Diz que pode promover absolutamente qualquer produto.", correct: false },
+      { text: "Explica que a maioria dos produtos é elegível, mas algumas categorias ou lojistas podem não participar do programa — e orienta como identificar produtos com comissão ativa no painel.", correct: true },
+      { text: "Diz que apenas produtos oficiais da Shopee podem ser promovidos.", correct: false },
+      { text: "Recomenda promover apenas os mais vendidos para ter resultados.", correct: false },
+      { text: "Diz que não há restrições mas a comissão varia muito.", correct: false }
     ],
-    feedbackCorrect: "Excelente! Você motivou com realidade — não com falsa esperança nem com pessimismo desnecessário.",
-    feedbackWrong: "Desanimar um iniciante ou prometer resultados sem base são os dois extremos a evitar. O caminho é realista e encorajador.",
-    tip: "Para iniciantes, use dados reais: micro-influenciadores com nicho definido frequentemente têm taxas de conversão maiores que perfis grandes e genéricos. Isso muda o jogo na cabeça do afiliado."
+    feedbackCorrect: "Excelente! Você deu a resposta correta com a nuance importante e ainda mostrou como identificar produtos elegíveis. Isso é orientação completa.",
+    feedbackWrong: "Não há restrição absoluta, mas há exceções. Orientar corretamente evita que o afiliado promova um produto sem comissão e perca trabalho.",
+    tip: "Sempre que o afiliado for escolher produtos, oriente a verificar o ícone de comissão ativa no painel antes de criar o conteúdo. Poucos minutos de verificação evitam horas de trabalho sem retorno."
+  },
+  {
+    profile: "😰 Perfil Ansioso",
+    scenario: "Prazo do primeiro pagamento",
+    text: "Afiliado: 'Quando vou receber meu primeiro pagamento? Já faz 15 dias que fiz vendas e não vi nada cair na conta.'",
+    context: "O afiliado está ansioso para receber e não entende o ciclo de pagamento.",
+    options: [
+      { text: "Diz que provavelmente tem algum problema e escala para suporte.", correct: false },
+      { text: "Explica que o pagamento segue o ciclo de confirmação de compra — após o prazo de devolução do produto — e que 15 dias pode ser muito cedo dependendo da data das vendas e do calendário de repasse.", correct: true },
+      { text: "Diz que o prazo é de 7 dias úteis e vai chegar em breve.", correct: false },
+      { text: "Confirma que está atrasado e pede para aguardar mais 30 dias.", correct: false },
+      { text: "Diz que não receber em 15 dias é anormal e abre reclamação.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você explicou a lógica do ciclo de pagamento com clareza e reduziu a ansiedade sem fazer promessas sobre data específica.",
+    feedbackWrong: "Pagamento de afiliados segue o ciclo de confirmação — não cai em 7 dias. Explicar esse processo evita ansiedade e chamados desnecessários.",
+    tip: "Para ansiosos com prazo de pagamento: explique o ciclo completo uma vez. 'A comissão só é liberada após confirmação da entrega e prazo de devolução — geralmente X dias após a compra.' Isso define a expectativa certa."
+  },
+  {
+    profile: "🔧 Perfil Técnico",
+    scenario: "Estratégia multicanal",
+    text: "Afiliado: 'Quero criar uma estratégia com links diferentes para cada plataforma (Instagram, YouTube, TikTok) para saber qual converte mais. Como organizo isso?'",
+    context: "O afiliado quer atribuição por canal para otimizar sua estratégia de conteúdo.",
+    options: [
+      { text: "Diz que um único link serve para todos os canais.", correct: false },
+      { text: "Confirma que é possível gerar links distintos por produto e canal, rastrear desempenho por link no painel e comparar taxa de conversão e receita por canal para otimizar investimento de conteúdo.", correct: true },
+      { text: "Recomenda colocar UTMs nos links, mas informa que a Shopee não rastreia isso.", correct: false },
+      { text: "Diz que é melhor focar em apenas um canal para ter dados mais claros.", correct: false },
+      { text: "Sugere criar uma planilha manual para rastrear cada canal.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você confirmou a funcionalidade de links distintos por canal e deu o caminho para análise comparativa. Isso é suporte estratégico de alto nível.",
+    feedbackWrong: "Links distintos por canal é a base de qualquer estratégia multicanal bem estruturada. Perfis técnicos precisam de confirmação e metodologia.",
+    tip: "Para afiliados com mentalidade analítica, o ouro está nos links distintos por canal. Isso transforma suposição em dado — e dado é o que move a estratégia."
+  },
+  {
+    profile: "😤 Perfil Estressado",
+    scenario: "Produto fora de estoque",
+    text: "Afiliado: 'Fiz um conteúdo enorme divulgando um produto e aí ele foi pro fora de estoque. Perdi todo o trabalho! Isso é horrível!'",
+    context: "O afiliado perdeu tráfego e trabalho por causa de um produto indisponível.",
+    options: [
+      { text: "Diz que faz parte do risco de ser afiliado.", correct: false },
+      { text: "Concorda que foi uma situação terrível e não oferece solução.", correct: false },
+      { text: "Reconhece a frustração, sugere verificar se o produto voltou ao estoque e atualizar o conteúdo, indica como diversificar com produtos similares no conteúdo e orienta a verificar disponibilidade antes de criar conteúdos longos.", correct: true },
+      { text: "Pede para esperar até o produto voltar ao estoque.", correct: false },
+      { text: "Diz que o sistema deveria ter avisado automaticamente.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você reconheceu o problema, ofereceu soluções de curto e médio prazo e ensinou como evitar o mesmo erro no futuro.",
+    feedbackWrong: "Quando o afiliado perde trabalho, ele precisa de validação + solução + aprendizado. Falar 'faz parte do risco' é o pior caminho.",
+    tip: "Para evitar esse problema no futuro, oriente: 'Sempre divulgue 2-3 produtos alternativos no mesmo conteúdo. Se um sai do estoque, o conteúdo ainda converte pelos outros.'"
   }
-];
+]
+
+}; // end BANKS
 
 /* ============================================================
-   ESTADO GLOBAL
+   ENGINE DO QUIZ
    ============================================================ */
-let currentQ = 0, correct = 0, wrong = 0, shuffled = [];
-let adsQ = 0, adsCorrect = 0, adsWrong = 0, adsShuffled = [];
+const state = {};
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
-/* ============================================================
-   ADS MODAL
-   ============================================================ */
-function openAdsQuiz() {
-  adsQ = 0; adsCorrect = 0; adsWrong = 0;
-  adsShuffled = shuffle(adsQuestions);
-  document.getElementById('ads-result').classList.remove('show');
-  document.getElementById('ads-quiz-area').style.display = 'block';
-  document.getElementById('ads-correct-count').textContent = '0';
-  document.getElementById('ads-wrong-count').textContent = '0';
-  document.getElementById('ads-modal-overlay').classList.add('open');
+function openModal(topic) {
+  const overlay = document.getElementById('modal-' + topic);
+  overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
-  adsLoadQuestion();
+  // show start screen, hide quiz and result
+  document.getElementById('start-' + topic).style.display = 'block';
+  document.getElementById('quiz-' + topic).style.display = 'none';
+  document.getElementById('result-' + topic).classList.remove('show');
 }
 
-function closeAdsQuiz() {
-  document.getElementById('ads-modal-overlay').classList.remove('open');
+function closeModal(topic) {
+  document.getElementById('modal-' + topic).classList.remove('open');
   document.body.style.overflow = '';
 }
 
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('ads-modal-overlay')) closeAdsQuiz();
+function handleOverlay(e, topic) {
+  if (e.target === document.getElementById('modal-' + topic)) closeModal(topic);
 }
 
-function adsLoadQuestion() {
-  const q = adsShuffled[adsQ];
-  document.getElementById('ads-prog-label').textContent = `Pergunta ${adsQ + 1} de ${adsShuffled.length}`;
-  document.getElementById('ads-prog-fill').style.width = `${(adsQ / adsShuffled.length) * 100}%`;
-  document.getElementById('ads-scenario').textContent = `💬 ${q.scenario}`;
-  document.getElementById('ads-q-text').textContent = q.text;
-  document.getElementById('ads-q-context').textContent = q.context;
+function startQuiz(topic) {
+  state[topic] = { q: 0, correct: 0, wrong: 0, shuffled: shuffle(BANKS[topic]) };
+  document.getElementById('start-' + topic).style.display = 'none';
+  document.getElementById('result-' + topic).classList.remove('show');
+  document.getElementById('quiz-' + topic).style.display = 'block';
+  document.getElementById('correct-' + topic).textContent = '0';
+  document.getElementById('wrong-' + topic).textContent = '0';
+  loadQ(topic);
+}
 
-  const grid = document.getElementById('ads-options');
-  grid.innerHTML = '';
-  const letters = ['A', 'B', 'C', 'D'];
+function loadQ(topic) {
+  const s = state[topic];
+  const q = s.shuffled[s.q];
+  const total = s.shuffled.length;
+
+  document.getElementById('prog-label-' + topic).textContent = `Pergunta ${s.q + 1} de ${total}`;
+  document.getElementById('fill-' + topic).style.width = `${(s.q / total) * 100}%`;
+  document.getElementById('profile-' + topic).textContent = q.profile;
+  document.getElementById('scenario-' + topic).textContent = `💬 ${q.scenario}`;
+  document.getElementById('qtext-' + topic).textContent = q.text;
+  document.getElementById('qctx-' + topic).textContent = q.context;
+
+  const optContainer = document.getElementById('opts-' + topic);
+  optContainer.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D', 'E'];
   const opts = shuffle(q.options);
 
   opts.forEach((opt, i) => {
     const btn = document.createElement('button');
-    btn.className = 'ads-opt-btn';
-    btn.innerHTML = `<span class="ads-opt-letter">${letters[i]}</span><span>${opt.text}</span>`;
-    btn.onclick = () => adsSelectOption(btn, opt.correct, q, opts);
-    grid.appendChild(btn);
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectOpt(topic, btn, opt.correct, q, opts);
+    optContainer.appendChild(btn);
   });
 
-  document.getElementById('ads-feedback').className = 'ads-feedback';
-  document.getElementById('ads-tip').className = 'ads-tip';
-  document.getElementById('ads-btn-next').className = 'ads-btn-next';
+  // reset feedback
+  document.getElementById('fb-' + topic).className = 'q-feedback';
+  document.getElementById('tip-' + topic).className = 'q-tip';
+  document.getElementById('next-' + topic).className = 'btn-next-q';
 
-  // scroll modal to top
-  document.getElementById('ads-modal').scrollTop = 0;
+  // scroll to top
+  document.getElementById('quizbox-' + topic).scrollTop = 0;
 }
 
-function adsSelectOption(btn, isCorrect, q, opts) {
-  const allBtns = document.querySelectorAll('.ads-opt-btn');
+function selectOpt(topic, btn, isCorrect, q, opts) {
+  const allBtns = document.querySelectorAll(`#opts-${topic} .opt-btn`);
   allBtns.forEach(b => {
     b.disabled = true;
     const txt = b.querySelector('span:last-child').textContent;
@@ -1419,173 +1662,57 @@ function adsSelectOption(btn, isCorrect, q, opts) {
     if (!isCorrect && match && match.correct) b.classList.add('correct');
   });
 
-  const fb = document.getElementById('ads-feedback');
+  const s = state[topic];
+  const fb = document.getElementById('fb-' + topic);
+
   if (isCorrect) {
-    adsCorrect++;
-    fb.className = 'ads-feedback fb-correct show';
-    document.getElementById('ads-fb-title').textContent = '✅ Resposta correta!';
-    document.getElementById('ads-fb-text').textContent = q.feedbackCorrect;
+    s.correct++;
+    fb.className = 'q-feedback fb-correct show';
+    document.getElementById('fb-title-' + topic).textContent = '✅ Resposta correta!';
+    document.getElementById('fb-text-' + topic).textContent = q.feedbackCorrect;
   } else {
-    adsWrong++;
-    fb.className = 'ads-feedback fb-wrong show';
-    document.getElementById('ads-fb-title').textContent = '❌ Não era essa!';
-    document.getElementById('ads-fb-text').textContent = q.feedbackWrong;
+    s.wrong++;
+    fb.className = 'q-feedback fb-wrong show';
+    document.getElementById('fb-title-' + topic).textContent = '❌ Não era essa!';
+    document.getElementById('fb-text-' + topic).textContent = q.feedbackWrong;
   }
 
-  document.getElementById('ads-tip-text').textContent = q.tip;
-  document.getElementById('ads-tip').className = 'ads-tip show';
-  document.getElementById('ads-btn-next').className = 'ads-btn-next show';
-  document.getElementById('ads-correct-count').textContent = adsCorrect;
-  document.getElementById('ads-wrong-count').textContent = adsWrong;
+  document.getElementById('tip-text-' + topic).textContent = q.tip;
+  document.getElementById('tip-' + topic).className = 'q-tip show';
+  document.getElementById('next-' + topic).className = 'btn-next-q show';
+  document.getElementById('correct-' + topic).textContent = s.correct;
+  document.getElementById('wrong-' + topic).textContent = s.wrong;
 }
 
-function adsNextQuestion() {
-  adsQ++;
-  if (adsQ >= adsShuffled.length) {
-    adsShowResult();
-  } else {
-    adsLoadQuestion();
-  }
+function nextQ(topic) {
+  const s = state[topic];
+  s.q++;
+  if (s.q >= s.shuffled.length) showResult(topic);
+  else loadQ(topic);
 }
 
-function adsShowResult() {
-  document.getElementById('ads-quiz-area').style.display = 'none';
-  const pct = Math.round((adsCorrect / adsShuffled.length) * 100);
-  document.getElementById('ads-res-pct').textContent = `${pct}%`;
-  document.getElementById('ads-res-c').textContent = adsCorrect;
-  document.getElementById('ads-res-e').textContent = adsWrong;
-  document.getElementById('ads-res-t').textContent = adsShuffled.length;
+function showResult(topic) {
+  const s = state[topic];
+  document.getElementById('quiz-' + topic).style.display = 'none';
+  const pct = Math.round((s.correct / s.shuffled.length) * 100);
+
+  document.getElementById('res-pct-' + topic).textContent = `${pct}%`;
+  document.getElementById('res-c-' + topic).textContent = s.correct;
+  document.getElementById('res-e-' + topic).textContent = s.wrong;
+  document.getElementById('res-t-' + topic).textContent = s.shuffled.length;
 
   let emoji, title, sub, level;
-  if (pct >= 88)      { emoji='🏆'; title='Expert em ADS!';      sub='Você domina ADS na Shopee. Conhecimento de alto nível!';          level='Expert'; }
-  else if (pct >= 63) { emoji='🎯'; title='Muito bem!';           sub='Sólido conhecimento. Pratique mais para chegar ao topo.';         level='Avançado'; }
-  else if (pct >= 38) { emoji='📈'; title='Bom progresso!';       sub='Você está no caminho certo. Revise os conceitos de lance e CTR.'; level='Intermediário'; }
-  else                { emoji='💪'; title='Continue treinando!';  sub='Revise como funciona o leilão de ADS e tente novamente.';         level='Iniciante'; }
+  if (pct >= 88)      { emoji='🏆'; title='Expert!';            sub='Comunicação de excelência. Você domina esse tema na Shopee!';            level='Expert'; }
+  else if (pct >= 63) { emoji='🎯'; title='Muito bem!';         sub='Sólido conhecimento. Pratique mais para chegar ao topo.';               level='Avançado'; }
+  else if (pct >= 38) { emoji='📈'; title='Bom progresso!';     sub='Você está no caminho certo. Revise os cenários de atendimento.';         level='Intermediário'; }
+  else                { emoji='💪'; title='Continue treinando!'; sub='Cada tentativa é aprendizado. Revise o tema e tente novamente!';        level='Iniciante'; }
 
-  document.getElementById('ads-res-emoji').textContent = emoji;
-  document.getElementById('ads-res-title').textContent = title;
-  document.getElementById('ads-res-sub').textContent = sub;
-  document.getElementById('ads-res-lvl').textContent = level;
-  document.getElementById('ads-result').classList.add('show');
-  document.getElementById('ads-modal').scrollTop = 0;
-}
-
-function restartAdsQuiz() {
-  document.getElementById('ads-result').classList.remove('show');
-  document.getElementById('ads-quiz-area').style.display = 'block';
-  adsQ = 0; adsCorrect = 0; adsWrong = 0;
-  adsShuffled = shuffle(adsQuestions);
-  document.getElementById('ads-correct-count').textContent = '0';
-  document.getElementById('ads-wrong-count').textContent = '0';
-  adsLoadQuestion();
-}
-
-/* ============================================================
-   QUIZ GERAL
-   ============================================================ */
-function startGame() {
-  shuffled = shuffle(questions);
-  currentQ = 0; correct = 0; wrong = 0;
-  updateHeader();
-  document.getElementById('screen-intro').style.display = 'none';
-  document.getElementById('screen-question').style.display = 'block';
-  loadQuestion();
-}
-
-function loadQuestion() {
-  const q = shuffled[currentQ];
-  document.getElementById('progress-label').textContent = `Pergunta ${currentQ + 1} de ${shuffled.length}`;
-  document.getElementById('topic-tag').textContent = q.topic;
-  document.getElementById('progress-fill').style.width = `${(currentQ / shuffled.length) * 100}%`;
-  document.getElementById('q-scenario').textContent = `💬 ${q.scenario}`;
-  document.getElementById('q-text').textContent = q.text;
-  document.getElementById('q-context').textContent = q.context;
-
-  const grid = document.getElementById('options-grid');
-  grid.innerHTML = '';
-  const letters = ['A', 'B', 'C', 'D'];
-  const opts = shuffle(q.options);
-
-  opts.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option-btn';
-    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt.text}</span>`;
-    btn.onclick = () => selectOption(btn, opt.correct, q, opts);
-    grid.appendChild(btn);
-  });
-
-  document.getElementById('feedback-box').className = 'feedback-box';
-  document.getElementById('tip-box').className = 'tip-box';
-  document.getElementById('btn-next').className = 'btn-next';
-}
-
-function selectOption(btn, isCorrect, q, opts) {
-  const allBtns = document.querySelectorAll('.option-btn');
-  allBtns.forEach(b => {
-    b.disabled = true;
-    const txt = b.querySelector('span:last-child').textContent;
-    const match = opts.find(o => o.text === txt);
-    if (b === btn) b.classList.add(isCorrect ? 'correct' : 'wrong');
-    if (!isCorrect && match && match.correct) b.classList.add('correct');
-  });
-
-  const fb = document.getElementById('feedback-box');
-  if (isCorrect) {
-    correct++;
-    fb.className = 'feedback-box correct-fb show';
-    document.getElementById('feedback-title').textContent = '✅ Resposta correta!';
-    document.getElementById('feedback-text').textContent = q.feedbackCorrect;
-  } else {
-    wrong++;
-    fb.className = 'feedback-box wrong-fb show';
-    document.getElementById('feedback-title').textContent = '❌ Não era essa!';
-    document.getElementById('feedback-text').textContent = q.feedbackWrong;
-  }
-
-  document.getElementById('tip-text').textContent = q.tip;
-  document.getElementById('tip-box').className = 'tip-box show';
-  document.getElementById('btn-next').className = 'btn-next show';
-  updateHeader();
-}
-
-function nextQuestion() {
-  currentQ++;
-  if (currentQ >= shuffled.length) showResult();
-  else { loadQuestion(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-}
-
-function showResult() {
-  document.getElementById('screen-question').style.display = 'none';
-  document.getElementById('screen-result').style.display = 'block';
-  const pct = Math.round((correct / shuffled.length) * 100);
-  document.getElementById('result-score').textContent = `${pct}%`;
-  document.getElementById('res-correct').textContent = correct;
-  document.getElementById('res-wrong').textContent = wrong;
-  document.getElementById('res-total').textContent = shuffled.length;
-
-  let emoji, title, sub, level;
-  if (pct >= 90)      { emoji='🏆'; title='Especialista Shopee!'; sub='Comunicação impecável. Você está pronto para qualquer cliente!'; level='Expert'; }
-  else if (pct >= 70) { emoji='🎯'; title='Muito bem!';           sub='Você domina os conceitos. Ajuste alguns pontos e será imbatível.'; level='Avançado'; }
-  else if (pct >= 50) { emoji='📈'; title='Bom progresso!';       sub='Você está no caminho certo. Continue praticando!'; level='Intermediário'; }
-  else                { emoji='💪'; title='Continue treinando!';  sub='Cada tentativa é aprendizado. Revise os temas e tente novamente.'; level='Iniciante'; }
-
-  document.getElementById('result-emoji').textContent = emoji;
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-sub').textContent = sub;
-  document.getElementById('res-level').textContent = level;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function restartGame() {
-  document.getElementById('screen-result').style.display = 'none';
-  document.getElementById('screen-intro').style.display = 'block';
-  correct = 0; wrong = 0;
-  updateHeader();
-}
-
-function updateHeader() {
-  document.getElementById('hdr-correct').textContent = correct;
-  document.getElementById('hdr-wrong').textContent = wrong;
+  document.getElementById('res-emoji-' + topic).textContent = emoji;
+  document.getElementById('res-title-' + topic).textContent = title;
+  document.getElementById('res-sub-' + topic).textContent = sub;
+  document.getElementById('res-lvl-' + topic).textContent = level;
+  document.getElementById('result-' + topic).classList.add('show');
+  document.getElementById('quizbox-' + topic).scrollTop = 0;
 }
 </script>
 </body>
