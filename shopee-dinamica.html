@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinâmica Shopee – Comunicação com Cliente</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #EE4D2D;
+    --orange-light: #FF6B4A;
+    --orange-dark: #C73B1E;
+    --cream: #FFF8F5;
+    --dark: #1A0A06;
+    --mid: #5C2E1A;
+    --text: #2D1206;
+    --gray: #F0EAE7;
+    --correct: #2ECC71;
+    --wrong: #E74C3C;
+    --neutral: #F39C12;
+    --card-bg: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BG PATTERN */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(238,77,45,0.07) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(238,77,45,0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper { position: relative; z-index: 1; }
+
+  /* HEADER */
+  header {
+    background: var(--orange);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 24px rgba(238,77,45,0.3);
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { opacity: 0.6; font-weight: 400; }
+
+  .score-bar {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .score-pill {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .score-pill strong { font-family: 'Syne', sans-serif; font-size: 1rem; }
+
+  /* MAIN */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* SCREEN: INTRO */
+  #screen-intro { text-align: center; }
+
+  .intro-badge {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 24px;
+  }
+
+  .intro-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--dark);
+    margin-bottom: 16px;
+  }
+
+  .intro-title em { color: var(--orange); font-style: normal; }
+
+  .intro-sub {
+    font-size: 1.1rem;
+    color: var(--mid);
+    max-width: 560px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    max-width: 540px;
+    margin: 0 auto 44px;
+  }
+
+  .topic-card {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(238,77,45,0.15);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: left;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .topic-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--orange);
+    box-shadow: 0 8px 24px rgba(238,77,45,0.12);
+  }
+
+  .topic-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .topic-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; color: var(--dark); }
+  .topic-count { font-size: 0.78rem; color: var(--mid); margin-top: 2px; }
+
+  .btn-primary {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 16px 44px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(238,77,45,0.35);
+  }
+
+  .btn-primary:hover {
+    background: var(--orange-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(238,77,45,0.4);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  /* SCREEN: QUESTION */
+  #screen-question { display: none; }
+
+  .progress-wrap {
+    margin-bottom: 32px;
+  }
+
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--mid);
+    letter-spacing: 0.5px;
+  }
+
+  .topic-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    background: var(--orange);
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: rgba(238,77,45,0.15);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* QUESTION CARD */
+  .q-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 36px 36px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+    border: 1.5px solid rgba(238,77,45,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .q-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--orange);
+  }
+
+  .q-scenario {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--orange);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .q-context {
+    font-size: 0.9rem;
+    color: var(--mid);
+    line-height: 1.6;
+    margin-top: 8px;
+    padding: 12px 16px;
+    background: var(--gray);
+    border-radius: 10px;
+    border-left: 3px solid var(--orange);
+    font-style: italic;
+  }
+
+  /* OPTIONS */
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .option-btn {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 14px;
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--orange);
+    background: #FFF2EF;
+    transform: translateX(4px);
+  }
+
+  .option-letter {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: 8px;
+    background: var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: var(--mid);
+    transition: all 0.2s;
+  }
+
+  .option-btn.correct {
+    background: #EAFAF1;
+    border-color: var(--correct);
+  }
+
+  .option-btn.correct .option-letter {
+    background: var(--correct);
+    color: #fff;
+  }
+
+  .option-btn.wrong {
+    background: #FDEDEC;
+    border-color: var(--wrong);
+  }
+
+  .option-btn.wrong .option-letter {
+    background: var(--wrong);
+    color: #fff;
+  }
+
+  .option-btn:disabled { cursor: default; }
+
+  /* FEEDBACK */
+  .feedback-box {
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .feedback-box.show { display: block; }
+
+  .feedback-box.correct-fb {
+    background: #EAFAF1;
+    border: 1.5px solid var(--correct);
+  }
+
+  .feedback-box.wrong-fb {
+    background: #FDEDEC;
+    border: 1.5px solid var(--wrong);
+  }
+
+  .feedback-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+
+  .feedback-box.correct-fb .feedback-title { color: #1A7A4A; }
+  .feedback-box.wrong-fb .feedback-title { color: #A93226; }
+
+  .feedback-text { font-size: 0.9rem; line-height: 1.6; }
+  .feedback-box.correct-fb .feedback-text { color: #1D6A47; }
+  .feedback-box.wrong-fb .feedback-text { color: #922B21; }
+
+  .tip-box {
+    background: #FFF8EC;
+    border: 1.5px solid var(--neutral);
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: none;
+    animation: fadeUp 0.3s ease 0.1s both;
+  }
+
+  .tip-box.show { display: block; }
+
+  .tip-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #B7770D;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .tip-text { font-size: 0.88rem; color: #7D5A0A; line-height: 1.6; }
+
+  /* NAV BUTTONS */
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .btn-next {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 32px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-next:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .btn-next.show { display: block; }
+
+  /* SCREEN: RESULT */
+  #screen-result { display: none; text-align: center; }
+
+  .result-emoji { font-size: 5rem; margin-bottom: 16px; }
+
+  .result-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+
+  .result-sub { font-size: 1rem; color: var(--mid); margin-bottom: 32px; }
+
+  .result-score-big {
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-score-label { font-size: 0.9rem; color: var(--mid); margin-bottom: 32px; }
+
+  .breakdown {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    max-width: 500px;
+    margin: 0 auto 40px;
+  }
+
+  .breakdown-item {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(0,0,0,0.08);
+    border-radius: 16px;
+    padding: 18px;
+    text-align: left;
+  }
+
+  .breakdown-icon { font-size: 1.4rem; margin-bottom: 6px; }
+  .breakdown-label { font-size: 0.75rem; color: var(--mid); margin-bottom: 2px; }
+  .breakdown-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.3rem; color: var(--dark); }
+
+  .btn-restart {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 40px;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 20px rgba(238,77,45,0.3);
+  }
+
+  .btn-restart:hover { background: var(--orange-dark); transform: translateY(-2px); }
+
+  @media (max-width: 600px) {
+    .topics-grid { grid-template-columns: 1fr; }
+    .breakdown { grid-template-columns: 1fr; }
+    .q-card { padding: 24px 20px; }
+    header { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<header>
+  <div class="logo">shopee <span>| treinamento</span></div>
+  <div class="score-bar">
+    <div class="score-pill">✅ <strong id="hdr-correct">0</strong> corretas</div>
+    <div class="score-pill">❌ <strong id="hdr-wrong">0</strong> erradas</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <div class="intro-badge">🎯 Dinâmica de Treinamento</div>
+    <h1 class="intro-title">Comunicação<br>com o Cliente <em>Shopee</em></h1>
+    <p class="intro-sub">Responda perguntas inesperadas que simulam situações reais de atendimento. Aprenda a comunicar com clareza, empatia e precisão!</p>
+
+    <div class="topics-grid">
+      <div class="topic-card">
+        <div class="topic-icon">📢</div>
+        <div class="topic-name">ADS</div>
+        <div class="topic-count">Anúncios & Impulsionamento</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">💰</div>
+        <div class="topic-name">Precificação</div>
+        <div class="topic-count">Estratégia de preços</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">📣</div>
+        <div class="topic-name">Central de Marketing</div>
+        <div class="topic-count">Vouchers, campanhas & mais</div>
+      </div>
+      <div class="topic-card">
+        <div class="topic-icon">🤝</div>
+        <div class="topic-name">Afiliados</div>
+        <div class="topic-count">Programa de parceiros</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="startGame()">Iniciar Dinâmica 🚀</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div id="screen-question">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="progress-label">Pergunta 1 de 12</span>
+        <span class="topic-tag" id="topic-tag">ADS</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-scenario" id="q-scenario"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-context" id="q-context"></div>
+    </div>
+
+    <div class="options-grid" id="options-grid"></div>
+
+    <div class="feedback-box" id="feedback-box">
+      <div class="feedback-title" id="feedback-title"></div>
+      <div class="feedback-text" id="feedback-text"></div>
+    </div>
+
+    <div class="tip-box" id="tip-box">
+      <div class="tip-label">💡 Dica de Comunicação</div>
+      <div class="tip-text" id="tip-text"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">Próxima →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result">
+    <div class="result-emoji" id="result-emoji">🏆</div>
+    <div class="result-title" id="result-title">Excelente!</div>
+    <div class="result-sub" id="result-sub">Você concluiu a dinâmica!</div>
+    <div class="result-score-big" id="result-score">0%</div>
+    <div class="result-score-label">de aproveitamento</div>
+
+    <div class="breakdown">
+      <div class="breakdown-item">
+        <div class="breakdown-icon">✅</div>
+        <div class="breakdown-label">Corretas</div>
+        <div class="breakdown-val" id="res-correct">0</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-icon">❌</div>
+        <div class="breakdown-label">Erradas</div>
+        <div class="breakdown-val" id="res-wrong">0</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-icon">📊</div>
+        <div class="breakdown-label">Total de perguntas</div>
+        <div class="breakdown-val" id="res-total">0</div>
+      </div>
+      <div class="breakdown-item">
+        <div class="breakdown-icon">⭐</div>
+        <div class="breakdown-label">Nível alcançado</div>
+        <div class="breakdown-val" id="res-level">-</div>
+      </div>
+    </div>
+
+    <button class="btn-restart" onclick="restartGame()">🔄 Jogar Novamente</button>
+  </div>
+
+</main>
+</div>
+
+<script>
+const questions = [
+  // ===== ADS =====
+  {
+    topic: "📢 ADS",
+    scenario: "Cliente confuso no chat",
+    text: "Um lojista te diz: "Coloquei dinheiro em ADS mas meu produto não aparece em nenhuma busca. Fui roubado?" Como você responde?",
+    context: "O cliente está irritado e desconfiante. Não sabe nada sobre como ADS funciona.",
+    options: [
+      { text: "Explica que ADS funciona por leilão e o anúncio aparece conforme o lance, a relevância do produto e o orçamento disponível — e que o dinheiro não foi cobrado sem exibição.", correct: true },
+      { text: "Diz que ADS sempre funciona e pede para ele esperar mais.", correct: false },
+      { text: "Manda ele ler a central de ajuda para entender melhor.", correct: false },
+      { text: "Pergunta se ele tem nota fiscal do crédito inserido.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você validou a preocupação do cliente e explicou a lógica do leilão de forma simples e transparente. Isso constrói confiança.",
+    feedbackWrong: "Atenção! Clientes irritados precisam de explicação clara e empática, não de respostas vagas ou burocracia.",
+    tip: "Ao explicar ADS, use analogias simples: "É como um leilão — quem oferece mais e tem produto relevante aparece na frente." Isso torna o conceito acessível para qualquer perfil de lojista."
+  },
+  {
+    topic: "📢 ADS",
+    scenario: "Situação de urgência",
+    text: "Um lojista diz: "Meu concorrente está aparecendo na frente de mim em TODOS os resultados. O que posso fazer agora, hoje?" Qual é a resposta mais útil?",
+    context: "O lojista está em pânico e quer ação imediata.",
+    options: [
+      { text: "Falar para ele esperar porque ADS demora para funcionar.", correct: false },
+      { text: "Sugerir que ele aumente o lance por clique, revise as palavras-chave selecionadas e verifique se o orçamento diário não está esgotando cedo.", correct: true },
+      { text: "Dizer que não tem controle sobre o algoritmo.", correct: false },
+      { text: "Pedir print de tela antes de orientar qualquer coisa.", correct: false }
+    ],
+    feedbackCorrect: "Ótimo! Você agiu de forma consultiva, dando ações concretas e imediatas. O lojista sente que você é um aliado.",
+    feedbackWrong: "Respostas vagas ou que transferem responsabilidade frustram o lojista e prejudicam a confiança na Shopee.",
+    tip: "Sempre que puder, entregue ao menos UMA ação concreta que o lojista pode fazer agora. Isso diferencia um bom atendimento de um atendimento mediano."
+  },
+  {
+    topic: "📢 ADS",
+    scenario: "Expectativa vs realidade",
+    text: "Lojista: "Já gastei R$200 em ADS essa semana e só vendi 2 produtos. Isso é normal?" Como você aborda isso?",
+    context: "O lojista não entende métricas de performance e acha que ADS deveria gerar venda automática.",
+    options: [
+      { text: "Diz que R$200 é pouco e ele precisa investir mais.", correct: false },
+      { text: "Explica que ADS gera visibilidade, não venda garantida, e que outros fatores como foto, preço e avaliações influenciam a conversão — e propõe analisar juntos as métricas.", correct: true },
+      { text: "Confirma que é normal e encerra o atendimento.", correct: false },
+      { text: "Pede que ele desative os anúncios e reconfigure tudo.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você educou o lojista sobre o papel do ADS e usou o momento para um atendimento consultivo.",
+    feedbackWrong: "O cliente precisa entender a diferença entre visibilidade e conversão. Sem essa explicação, ele ficará frustrado indefinidamente.",
+    tip: "Separe sempre visibilidade (ADS) de conversão (produto, preço, fotos). Isso educa o lojista e o ajuda a ter expectativas realistas — o que reduz reclamações futuras."
+  },
+
+  // ===== PRECIFICAÇÃO =====
+  {
+    topic: "💰 Precificação",
+    scenario: "Decisão sob pressão",
+    text: "Um lojista pergunta: "Meu concorrente está 10 reais mais barato. Devo baixar meu preço agora ou vou perder todas as vendas?" Como você orienta?",
+    context: "O lojista está em modo de pânico e quer uma resposta rápida e definitiva.",
+    options: [
+      { text: "Diz para baixar o preço imediatamente para não perder clientes.", correct: false },
+      { text: "Orienta que a decisão de preço depende da margem, do posicionamento e do diferencial do produto — e que cortar preço sem análise pode ser prejudicial.", correct: true },
+      { text: "Diz que ele deveria aumentar o preço para parecer premium.", correct: false },
+      { text: "Pede para ele aguardar 24h antes de tomar qualquer decisão.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você evitou dar uma resposta impulsiva e ajudou o lojista a pensar estrategicamente, não apenas reativo.",
+    feedbackWrong: "Baixar preço sem análise pode destruir margem. Um bom assistente ajuda o lojista a pensar antes de agir.",
+    tip: "Ajude o lojista a calcular: "Se você baixar R$10, quantas unidades a mais precisa vender para manter a mesma receita?" Esse cálculo simples muda totalmente a perspectiva."
+  },
+  {
+    topic: "💰 Precificação",
+    scenario: "Dúvida técnica inesperada",
+    text: "Lojista: "O sistema está mostrando que meu preço está 'irregular'. O que isso significa e o que faço?" Como você explica?",
+    context: "O lojista não sabe o que significa 'preço irregular' na plataforma e está preocupado.",
+    options: [
+      { text: "Diz que é um bug e para não se preocupar.", correct: false },
+      { text: "Explica que preço irregular pode indicar que o produto está acima do teto ou abaixo do piso permitido pela plataforma, ou que há inconsistência entre variações, e orienta como corrigir.", correct: true },
+      { text: "Manda o link da central de ajuda sem mais explicações.", correct: false },
+      { text: "Pede para ele deletar o produto e recadastrar.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você trouxe clareza técnica em linguagem simples e deu o próximo passo ao lojista.",
+    feedbackWrong: "O lojista precisa entender o que aconteceu e o que fazer — não apenas receber um link ou uma negação do problema.",
+    tip: "Sempre que explicar um erro ou alerta da plataforma, use: 1) O que significa, 2) Por que acontece, 3) Como corrigir. Esse roteiro simples torna qualquer explicação técnica clara."
+  },
+  {
+    topic: "💰 Precificação",
+    scenario: "Armadilha de percepção",
+    text: "Um lojista afirma: "Vou colocar meu produto mais caro que a concorrência porque produto caro parece mais qualidade." Como você reage a isso?",
+    context: "O lojista tem uma crença sobre percepção de preço que pode ou não ser válida no contexto dele.",
+    options: [
+      { text: "Concorda imediatamente e valida a estratégia.", correct: false },
+      { text: "Discorda e pede para baixar o preço.", correct: false },
+      { text: "Valida que precificação premium pode funcionar, mas alerta que precisa estar acompanhada de fotos profissionais, avaliações e descrições que justifiquem o preço.", correct: true },
+      { text: "Diz que na Shopee não funciona estratégia de preço alto.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você respeitou a visão do lojista, mas complementou com a realidade do mercado digital. Isso é orientação consultiva de qualidade.",
+    feedbackWrong: "Nem concordar cegamente nem contrariar sem base. Um bom assistente adiciona contexto e ajuda o lojista a tomar a melhor decisão.",
+    tip: "Quando um lojista tem uma crença sobre estratégia, não bata de frente. Valide o que tem de verdade e acrescente o que falta: "Isso pode funcionar quando acompanhado de...""
+  },
+
+  // ===== CENTRAL DE MARKETING =====
+  {
+    topic: "📣 Central de Marketing",
+    scenario: "Cliente perdido na ferramenta",
+    text: "Lojista: "Tentei criar um voucher mas não achei onde ativar. A Shopee escondeu isso de mim?" Como você responde sem irritar o cliente?",
+    context: "O lojista está frustrado com a usabilidade da plataforma e usando linguagem de acusação.",
+    options: [
+      { text: "Diz que ele está errado e que é fácil achar.", correct: false },
+      { text: "Reconhece que a interface pode ser confusa, guia passo a passo por onde criar e ativar o voucher e confirma se funcionou.", correct: true },
+      { text: "Manda o link do tutorial sem interação adicional.", correct: false },
+      { text: "Diz que precisa de uma captura de tela antes de ajudar.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você acolheu a frustração sem validar a acusação, e guiou o cliente com empatia.",
+    feedbackWrong: "Nunca confronte o cliente sobre sua dificuldade. Oriente com empatia, passo a passo. A experiência positiva é o que importa.",
+    tip: "Quando o cliente diz que "não achou" algo, evite "é fácil" ou "está bem visível" — isso invalida a experiência dele. Prefira: "Deixa eu te mostrar o caminho exato!""
+  },
+  {
+    topic: "📣 Central de Marketing",
+    scenario: "Expectativa de resultado",
+    text: "Lojista: "Criei um voucher de 20% OFF mas não vendeu nada. A promoção não funciona?" O que você diz?",
+    context: "O lojista não entende que voucher sozinho não atrai tráfego.",
+    options: [
+      { text: "Concorda que a promoção pode estar com bug.", correct: false },
+      { text: "Explica que vouchers precisam de divulgação — para o cliente saber que existe. E sugere combinar com ADS, feed de produto e participação em campanhas da Shopee.", correct: true },
+      { text: "Diz que 20% OFF é pouco e aumentar o desconto resolve.", correct: false },
+      { text: "Recomenda deletar o voucher e criar outro.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você educou o lojista sobre o ecossistema de marketing e deu soluções complementares.",
+    feedbackWrong: "Voucher sem divulgação é uma promo invisível. O lojista precisa entender que marketing é um conjunto de ações, não uma bala de prata.",
+    tip: "Use a metáfora da vitrine: "Criar um voucher sem divulgação é como colocar uma placa de promoção numa loja fechada. O desconto existe, mas ninguém sabe." Isso esclarece na hora."
+  },
+  {
+    topic: "📣 Central de Marketing",
+    scenario: "Reclamação de campanha",
+    text: "Lojista irritado: "Participei da campanha do Shopee Birthday mas meu produto não ficou no banner. Fui preterido por lojistas maiores?" Como você lida?",
+    context: "O lojista sente que há favoritismo. É uma situação delicada e emocional.",
+    options: [
+      { text: "Confirma que há mesmo preferência por grandes lojistas.", correct: false },
+      { text: "Nega qualquer critério de seleção.", correct: false },
+      { text: "Reconhece a frustração, explica que a curadoria de campanhas tem critérios como avaliação do produto, histórico de vendas e qualidade da ficha, e orienta como se preparar melhor para próximas campanhas.", correct: true },
+      { text: "Diz que ele deveria ter lido as regras antes de participar.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você validou o sentimento, explicou os critérios com transparência e deu um caminho construtivo.",
+    feedbackWrong: "Em situações emocionais, validar o sentimento vem primeiro. Só depois vem a explicação racional.",
+    tip: "Fórmula para situações emocionais: 1) "Entendo sua frustração..." 2) Explique os critérios objetivos 3) Ofereça um próximo passo positivo. Essa sequência transforma reclamação em oportunidade."
+  },
+
+  // ===== AFILIADOS =====
+  {
+    topic: "🤝 Afiliados",
+    scenario: "Dúvida básica com desconfiança",
+    text: "Um criador de conteúdo pergunta: "Esse programa de afiliados é sério ou vou ficar trabalhando de graça?" Como você transmite credibilidade?",
+    context: "A pessoa tem desconfiança legítima — já foi enganada por outros programas.",
+    options: [
+      { text: "Garante que vai ganhar muito dinheiro sem dar detalhes.", correct: false },
+      { text: "Explica com clareza como a comissão funciona, quando é paga, como acompanhar os ganhos e qual o suporte disponível — sem prometer resultados exagerados.", correct: true },
+      { text: "Diz que todos os afiliados ganham bem e manda cases de sucesso.", correct: false },
+      { text: "Pede para ele ler os termos e condições antes de qualquer explicação.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você construiu credibilidade com transparência e informação concreta — não com promessas vazias.",
+    feedbackWrong: "Prometer ganhos sem base ou ser evasivo sobre como funciona aumenta a desconfiança. Credibilidade vem de clareza.",
+    tip: "Com quem desconfia, o antídoto é transparência radical. Explique o processo completo, inclusive as limitações. Quem é honesto sobre o "pode não funcionar para todos" ganha muito mais confiança."
+  },
+  {
+    topic: "🤝 Afiliados",
+    scenario: "Problema de rastreamento",
+    text: "Afiliado: "Fiz 30 vendas esse mês pelo meu link mas só apareceram 12 no meu painel. Cadê as outras?" Como você investiga e responde?",
+    context: "O afiliado está preocupado com perda de comissão. É uma situação financeira sensível.",
+    options: [
+      { text: "Diz que ele deve ter contado errado.", correct: false },
+      { text: "Valida a preocupação, explica que podem existir cancelamentos, devoluções ou compras feitas sem cookie rastreado, e orienta como abrir um chamado com o período e os pedidos específicos para investigação.", correct: true },
+      { text: "Confirma que o sistema tem falhas e vai pagar assim que investigar.", correct: false },
+      { text: "Pede para ele mandar print de todas as 30 vendas para verificar.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você não descartou a preocupação, mas também não fez promessas indevidas. Deu o processo correto.",
+    feedbackWrong: "Nunca descarte uma divergência financeira como erro do cliente. Sempre valide e direcione para investigação formal.",
+    tip: "Em questões financeiras, nunca use "você deve ter contado errado." Prefira: "Vamos investigar juntos." Isso mantém a confiança mesmo quando o resultado não for o esperado pelo afiliado."
+  },
+  {
+    topic: "🤝 Afiliados",
+    scenario: "Estratégia de crescimento",
+    text: "Afiliado iniciante: "Tenho 500 seguidores no Instagram. Conseguirei ganhar alguma coisa ou só quem tem muito seguidor ganha?" O que você responde?",
+    context: "O afiliado está inseguro sobre suas chances com uma audiência pequena.",
+    options: [
+      { text: "Diz que com 500 seguidores é difícil e ele deveria esperar crescer.", correct: false },
+      { text: "Explica que engajamento importa mais que tamanho da audiência, e orienta sobre nichos, consistência e como escolher produtos alinhados ao perfil do público.", correct: true },
+      { text: "Garante que vai ganhar muito mesmo com poucos seguidores.", correct: false },
+      { text: "Sugere que ele compre mais seguidores para crescer mais rápido.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você motivou com realidade — não com falsa esperança nem com pessimismo desnecessário.",
+    feedbackWrong: "Desanimar um iniciante ou prometer resultados sem base são os dois extremos a evitar. O caminho é realista e encorajador.",
+    tip: "Para iniciantes, use dados reais: micro-influenciadores com nicho definido frequentemente têm taxas de conversão maiores que perfis grandes e genéricos. Isso muda o jogo na cabeça do afiliado."
+  }
+];
+
+let currentQ = 0;
+let correct = 0;
+let wrong = 0;
+let shuffled = [];
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function startGame() {
+  shuffled = shuffle(questions);
+  currentQ = 0; correct = 0; wrong = 0;
+  updateHeader();
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-question').style.display = 'block';
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = shuffled[currentQ];
+  document.getElementById('progress-label').textContent = `Pergunta ${currentQ + 1} de ${shuffled.length}`;
+  document.getElementById('topic-tag').textContent = q.topic;
+  document.getElementById('progress-fill').style.width = `${(currentQ / shuffled.length) * 100}%`;
+  document.getElementById('q-scenario').textContent = `💬 ${q.scenario}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-context').textContent = q.context;
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const opts = shuffle(q.options);
+
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => selectOption(btn, opt.correct, q);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('feedback-box').className = 'feedback-box';
+  document.getElementById('tip-box').className = 'tip-box';
+  document.getElementById('btn-next').className = 'btn-next';
+}
+
+function selectOption(btn, isCorrect, q) {
+  const allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    if (b === btn) {
+      b.classList.add(isCorrect ? 'correct' : 'wrong');
+    }
+  });
+
+  // Mark correct answer if wrong
+  if (!isCorrect) {
+    allBtns.forEach(b => {
+      const text = b.querySelector('span:last-child').textContent;
+      const match = q.options.find(o => o.text === text && o.correct);
+      if (match) b.classList.add('correct');
+    });
+  }
+
+  const fb = document.getElementById('feedback-box');
+  const fbTitle = document.getElementById('feedback-title');
+  const fbText = document.getElementById('feedback-text');
+
+  if (isCorrect) {
+    correct++;
+    fb.className = 'feedback-box correct-fb show';
+    fbTitle.textContent = '✅ Resposta correta!';
+    fbText.textContent = q.feedbackCorrect;
+  } else {
+    wrong++;
+    fb.className = 'feedback-box wrong-fb show';
+    fbTitle.textContent = '❌ Não era essa!';
+    fbText.textContent = q.feedbackWrong;
+  }
+
+  document.getElementById('tip-text').textContent = q.tip;
+  document.getElementById('tip-box').className = 'tip-box show';
+  document.getElementById('btn-next').className = 'btn-next show';
+  updateHeader();
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= shuffled.length) {
+    showResult();
+  } else {
+    loadQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function showResult() {
+  document.getElementById('screen-question').style.display = 'none';
+  document.getElementById('screen-result').style.display = 'block';
+
+  const pct = Math.round((correct / shuffled.length) * 100);
+  document.getElementById('result-score').textContent = `${pct}%`;
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-total').textContent = shuffled.length;
+
+  let emoji, title, sub, level;
+  if (pct >= 90) { emoji='🏆'; title='Especialista Shopee!'; sub='Comunicação impecável. Você está pronto para qualquer cliente!'; level='Expert'; }
+  else if (pct >= 70) { emoji='🎯'; title='Muito bem!'; sub='Você domina os conceitos. Ajuste alguns pontos e será imbatível.'; level='Avançado'; }
+  else if (pct >= 50) { emoji='📈'; title='Bom progresso!'; sub='Você está no caminho certo. Continue praticando!'; level='Intermediário'; }
+  else { emoji='💪'; title='Continue treinando!'; sub='Cada tentativa é aprendizado. Revise os temas e tente novamente.'; level='Iniciante'; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+  document.getElementById('res-level').textContent = level;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartGame() {
+  document.getElementById('screen-result').style.display = 'none';
+  document.getElementById('screen-intro').style.display = 'block';
+  correct = 0; wrong = 0;
+  updateHeader();
+}
+
+function updateHeader() {
+  document.getElementById('hdr-correct').textContent = correct;
+  document.getElementById('hdr-wrong').textContent = wrong;
+}
+</script>
+</body>
+</html>
