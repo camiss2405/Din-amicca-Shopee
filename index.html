@@ -31,7 +31,6 @@
     overflow-x: hidden;
   }
 
-  /* BG PATTERN */
   body::before {
     content: '';
     position: fixed;
@@ -45,7 +44,6 @@
 
   .wrapper { position: relative; z-index: 1; }
 
-  /* HEADER */
   header {
     background: var(--orange);
     padding: 20px 32px;
@@ -65,11 +63,7 @@
 
   .logo span { opacity: 0.6; font-weight: 400; }
 
-  .score-bar {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-  }
+  .score-bar { display: flex; gap: 20px; align-items: center; }
 
   .score-pill {
     background: rgba(255,255,255,0.2);
@@ -83,14 +77,13 @@
 
   .score-pill strong { font-family: 'Syne', sans-serif; font-size: 1rem; }
 
-  /* MAIN */
   main {
     max-width: 860px;
     margin: 0 auto;
     padding: 40px 20px 80px;
   }
 
-  /* SCREEN: INTRO */
+  /* ===== INTRO ===== */
   #screen-intro { text-align: center; }
 
   .intro-badge {
@@ -140,13 +133,39 @@
     padding: 20px;
     text-align: left;
     transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    cursor: default;
+    cursor: pointer;
+    position: relative;
   }
 
   .topic-card:hover {
     transform: translateY(-3px);
     border-color: var(--orange);
     box-shadow: 0 8px 24px rgba(238,77,45,0.12);
+  }
+
+  /* ADS card glow */
+  .topic-card.ads-card {
+    border-color: rgba(238,77,45,0.35);
+    background: linear-gradient(135deg, #fff 70%, #FFF2EF);
+  }
+
+  .topic-card.ads-card:hover {
+    border-color: var(--orange);
+    box-shadow: 0 8px 32px rgba(238,77,45,0.22);
+  }
+
+  .ads-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 100px;
   }
 
   .topic-icon { font-size: 1.8rem; margin-bottom: 8px; }
@@ -175,12 +194,382 @@
 
   .btn-primary:active { transform: translateY(0); }
 
-  /* SCREEN: QUESTION */
+  /* ===== ADS MODAL OVERLAY ===== */
+  #ads-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 10, 6, 0.65);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+
+  #ads-modal-overlay.open {
+    display: flex;
+    animation: overlayIn 0.25s ease;
+  }
+
+  @keyframes overlayIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .ads-modal {
+    background: var(--card-bg);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+    animation: modalSlide 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative;
+  }
+
+  @keyframes modalSlide {
+    from { opacity: 0; transform: translateY(28px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    background: var(--orange);
+    padding: 24px 28px 20px;
+    border-radius: 24px 24px 0 0;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255,255,255,0.2);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .modal-close:hover { background: rgba(255,255,255,0.35); }
+
+  .modal-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.22);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .modal-subtitle { font-size: 0.88rem; color: rgba(255,255,255,0.8); }
+
+  /* ADS progress */
+  .ads-progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 28px 8px;
+  }
+
+  .ads-prog-label { font-size: 0.82rem; color: var(--mid); font-weight: 500; }
+
+  .ads-score-pills { display: flex; gap: 8px; }
+
+  .ads-pill {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+
+  .ads-pill.c { background: #EAFAF1; color: #1A7A4A; }
+  .ads-pill.e { background: #FDEDEC; color: #A93226; }
+
+  .ads-prog-bar-wrap { padding: 0 28px 16px; }
+
+  .ads-prog-bar {
+    height: 5px;
+    background: rgba(238,77,45,0.12);
+    border-radius: 100px;
+    overflow: hidden;
+  }
+
+  .ads-prog-fill {
+    height: 100%;
+    background: var(--orange);
+    border-radius: 100px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  /* ADS question body */
+  .ads-body { padding: 0 28px 28px; }
+
+  .ads-q-scenario {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--orange);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+
+  .ads-q-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+
+  .ads-q-context {
+    font-size: 0.85rem;
+    color: var(--mid);
+    line-height: 1.6;
+    padding: 10px 14px;
+    background: var(--gray);
+    border-radius: 10px;
+    border-left: 3px solid var(--orange);
+    font-style: italic;
+    margin-bottom: 18px;
+  }
+
+  .ads-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+  .ads-opt-btn {
+    background: var(--card-bg);
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text);
+    line-height: 1.5;
+    width: 100%;
+  }
+
+  .ads-opt-btn:hover:not(:disabled) {
+    border-color: var(--orange);
+    background: #FFF2EF;
+    transform: translateX(3px);
+  }
+
+  .ads-opt-letter {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 7px;
+    background: var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--mid);
+    transition: all 0.2s;
+  }
+
+  .ads-opt-btn.correct { background: #EAFAF1; border-color: var(--correct); }
+  .ads-opt-btn.correct .ads-opt-letter { background: var(--correct); color: #fff; }
+  .ads-opt-btn.wrong { background: #FDEDEC; border-color: var(--wrong); }
+  .ads-opt-btn.wrong .ads-opt-letter { background: var(--wrong); color: #fff; }
+  .ads-opt-btn:disabled { cursor: default; }
+
+  /* Feedback dentro do modal */
+  .ads-feedback {
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    display: none;
+    animation: fadeUp 0.28s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .ads-feedback.show { display: block; }
+
+  .ads-feedback.fb-correct { background: #EAFAF1; border: 1.5px solid var(--correct); }
+  .ads-feedback.fb-wrong { background: #FDEDEC; border: 1.5px solid var(--wrong); }
+
+  .ads-fb-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 5px;
+  }
+
+  .ads-feedback.fb-correct .ads-fb-title { color: #1A7A4A; }
+  .ads-feedback.fb-wrong .ads-fb-title { color: #A93226; }
+
+  .ads-fb-text { font-size: 0.87rem; line-height: 1.6; }
+  .ads-feedback.fb-correct .ads-fb-text { color: #1D6A47; }
+  .ads-feedback.fb-wrong .ads-fb-text { color: #922B21; }
+
+  .ads-tip {
+    background: #FFF8EC;
+    border: 1.5px solid var(--neutral);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    display: none;
+    animation: fadeUp 0.28s ease 0.1s both;
+  }
+
+  .ads-tip.show { display: block; }
+
+  .ads-tip-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #B7770D;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+
+  .ads-tip-text { font-size: 0.85rem; color: #7D5A0A; line-height: 1.6; }
+
+  .ads-nav {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .ads-btn-next {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 28px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.92rem;
+    cursor: pointer;
+    display: none;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .ads-btn-next:hover { background: var(--orange-dark); transform: translateY(-1px); }
+  .ads-btn-next.show { display: block; }
+
+  /* ADS Result screen dentro do modal */
+  .ads-result {
+    display: none;
+    text-align: center;
+    padding: 28px 28px 32px;
+    animation: fadeUp 0.3s ease;
+  }
+
+  .ads-result.show { display: block; }
+
+  .ads-res-emoji { font-size: 4rem; margin-bottom: 12px; }
+
+  .ads-res-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+
+  .ads-res-sub { font-size: 0.92rem; color: var(--mid); margin-bottom: 20px; line-height: 1.6; }
+
+  .ads-res-pct {
+    font-family: 'Syne', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .ads-res-pct-label { font-size: 0.85rem; color: var(--mid); margin-bottom: 24px; }
+
+  .ads-breakdown {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .ads-bk-item {
+    background: var(--gray);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: left;
+  }
+
+  .ads-bk-icon { font-size: 1.2rem; margin-bottom: 4px; }
+  .ads-bk-label { font-size: 0.72rem; color: var(--mid); margin-bottom: 2px; }
+  .ads-bk-val { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem; color: var(--dark); }
+
+  .ads-res-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  .ads-btn-again {
+    background: var(--orange);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 28px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 16px rgba(238,77,45,0.3);
+  }
+
+  .ads-btn-again:hover { background: var(--orange-dark); transform: translateY(-1px); }
+
+  .ads-btn-close {
+    background: transparent;
+    color: var(--mid);
+    border: 1.5px solid rgba(0,0,0,0.12);
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .ads-btn-close:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* ===== QUESTION SCREEN (quiz geral) ===== */
   #screen-question { display: none; }
 
-  .progress-wrap {
-    margin-bottom: 32px;
-  }
+  .progress-wrap { margin-bottom: 32px; }
 
   .progress-top {
     display: flex;
@@ -189,12 +578,7 @@
     margin-bottom: 10px;
   }
 
-  .progress-label {
-    font-size: 0.82rem;
-    font-weight: 500;
-    color: var(--mid);
-    letter-spacing: 0.5px;
-  }
+  .progress-label { font-size: 0.82rem; font-weight: 500; color: var(--mid); letter-spacing: 0.5px; }
 
   .topic-tag {
     font-size: 0.75rem;
@@ -220,7 +604,6 @@
     transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* QUESTION CARD */
   .q-card {
     background: var(--card-bg);
     border-radius: 24px;
@@ -270,13 +653,7 @@
     font-style: italic;
   }
 
-  /* OPTIONS */
-  .options-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+  .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
 
   .option-btn {
     background: var(--card-bg);
@@ -317,29 +694,12 @@
     transition: all 0.2s;
   }
 
-  .option-btn.correct {
-    background: #EAFAF1;
-    border-color: var(--correct);
-  }
-
-  .option-btn.correct .option-letter {
-    background: var(--correct);
-    color: #fff;
-  }
-
-  .option-btn.wrong {
-    background: #FDEDEC;
-    border-color: var(--wrong);
-  }
-
-  .option-btn.wrong .option-letter {
-    background: var(--wrong);
-    color: #fff;
-  }
-
+  .option-btn.correct { background: #EAFAF1; border-color: var(--correct); }
+  .option-btn.correct .option-letter { background: var(--correct); color: #fff; }
+  .option-btn.wrong { background: #FDEDEC; border-color: var(--wrong); }
+  .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; }
   .option-btn:disabled { cursor: default; }
 
-  /* FEEDBACK */
   .feedback-box {
     border-radius: 14px;
     padding: 20px 22px;
@@ -348,30 +708,11 @@
     animation: fadeUp 0.3s ease;
   }
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
   .feedback-box.show { display: block; }
+  .feedback-box.correct-fb { background: #EAFAF1; border: 1.5px solid var(--correct); }
+  .feedback-box.wrong-fb { background: #FDEDEC; border: 1.5px solid var(--wrong); }
 
-  .feedback-box.correct-fb {
-    background: #EAFAF1;
-    border: 1.5px solid var(--correct);
-  }
-
-  .feedback-box.wrong-fb {
-    background: #FDEDEC;
-    border: 1.5px solid var(--wrong);
-  }
-
-  .feedback-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 6px;
-  }
-
+  .feedback-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
   .feedback-box.correct-fb .feedback-title { color: #1A7A4A; }
   .feedback-box.wrong-fb .feedback-title { color: #A93226; }
 
@@ -403,12 +744,7 @@
 
   .tip-text { font-size: 0.88rem; color: #7D5A0A; line-height: 1.6; }
 
-  /* NAV BUTTONS */
-  .nav-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-  }
+  .nav-row { display: flex; justify-content: flex-end; gap: 12px; }
 
   .btn-next {
     background: var(--orange);
@@ -427,7 +763,7 @@
   .btn-next:hover { background: var(--orange-dark); transform: translateY(-1px); }
   .btn-next.show { display: block; }
 
-  /* SCREEN: RESULT */
+  /* ===== RESULT GERAL ===== */
   #screen-result { display: none; text-align: center; }
 
   .result-emoji { font-size: 5rem; margin-bottom: 16px; }
@@ -492,8 +828,13 @@
   @media (max-width: 600px) {
     .topics-grid { grid-template-columns: 1fr; }
     .breakdown { grid-template-columns: 1fr; }
+    .ads-breakdown { grid-template-columns: 1fr; }
     .q-card { padding: 24px 20px; }
     header { padding: 16px 20px; }
+    .ads-modal { border-radius: 20px; }
+    .modal-header { border-radius: 20px 20px 0 0; padding: 20px 22px 16px; }
+    .ads-body { padding: 0 18px 22px; }
+    .ads-result { padding: 20px 18px 24px; }
   }
 </style>
 </head>
@@ -517,7 +858,8 @@
     <p class="intro-sub">Responda perguntas inesperadas que simulam situações reais de atendimento. Aprenda a comunicar com clareza, empatia e precisão!</p>
 
     <div class="topics-grid">
-      <div class="topic-card">
+      <div class="topic-card ads-card" onclick="openAdsQuiz()">
+        <div class="ads-badge">Quiz ativo</div>
         <div class="topic-icon">📢</div>
         <div class="topic-name">ADS</div>
         <div class="topic-count">Anúncios & Impulsionamento</div>
@@ -539,10 +881,10 @@
       </div>
     </div>
 
-    <button class="btn-primary" onclick="startGame()">Iniciar Dinâmica 🚀</button>
+    <button class="btn-primary" onclick="startGame()">Iniciar Dinâmica Completa 🚀</button>
   </div>
 
-  <!-- QUESTION -->
+  <!-- QUESTION (quiz geral) -->
   <div id="screen-question">
     <div class="progress-wrap">
       <div class="progress-top">
@@ -577,7 +919,7 @@
     </div>
   </div>
 
-  <!-- RESULT -->
+  <!-- RESULT GERAL -->
   <div id="screen-result">
     <div class="result-emoji" id="result-emoji">🏆</div>
     <div class="result-title" id="result-title">Excelente!</div>
@@ -614,9 +956,216 @@
 </main>
 </div>
 
+<!-- ===== ADS MODAL ===== -->
+<div id="ads-modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="ads-modal" id="ads-modal">
+
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeAdsQuiz()">✕</button>
+      <div class="modal-tag">📢 Quiz ADS</div>
+      <div class="modal-title">Anúncios & Impulsionamento</div>
+      <div class="modal-subtitle">Teste seus conhecimentos sobre ADS na Shopee</div>
+    </div>
+
+    <!-- progress -->
+    <div id="ads-quiz-area">
+      <div class="ads-progress-row">
+        <span class="ads-prog-label" id="ads-prog-label">Pergunta 1 de 8</span>
+        <div class="ads-score-pills">
+          <span class="ads-pill c">✅ <span id="ads-correct-count">0</span></span>
+          <span class="ads-pill e">❌ <span id="ads-wrong-count">0</span></span>
+        </div>
+      </div>
+      <div class="ads-prog-bar-wrap">
+        <div class="ads-prog-bar">
+          <div class="ads-prog-fill" id="ads-prog-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="ads-body">
+        <div class="ads-q-scenario" id="ads-scenario"></div>
+        <div class="ads-q-text" id="ads-q-text"></div>
+        <div class="ads-q-context" id="ads-q-context"></div>
+
+        <div class="ads-options" id="ads-options"></div>
+
+        <div class="ads-feedback" id="ads-feedback">
+          <div class="ads-fb-title" id="ads-fb-title"></div>
+          <div class="ads-fb-text" id="ads-fb-text"></div>
+        </div>
+
+        <div class="ads-tip" id="ads-tip">
+          <div class="ads-tip-label">💡 Dica de Comunicação</div>
+          <div class="ads-tip-text" id="ads-tip-text"></div>
+        </div>
+
+        <div class="ads-nav">
+          <button class="ads-btn-next" id="ads-btn-next" onclick="adsNextQuestion()">Próxima →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADS Result -->
+    <div class="ads-result" id="ads-result">
+      <div class="ads-res-emoji" id="ads-res-emoji">🏆</div>
+      <div class="ads-res-title" id="ads-res-title">Excelente!</div>
+      <div class="ads-res-sub" id="ads-res-sub">Você domina ADS na Shopee!</div>
+      <div class="ads-res-pct" id="ads-res-pct">0%</div>
+      <div class="ads-res-pct-label">de aproveitamento no quiz de ADS</div>
+      <div class="ads-breakdown">
+        <div class="ads-bk-item">
+          <div class="ads-bk-icon">✅</div>
+          <div class="ads-bk-label">Corretas</div>
+          <div class="ads-bk-val" id="ads-res-c">0</div>
+        </div>
+        <div class="ads-bk-item">
+          <div class="ads-bk-icon">❌</div>
+          <div class="ads-bk-label">Erradas</div>
+          <div class="ads-bk-val" id="ads-res-e">0</div>
+        </div>
+        <div class="ads-bk-item">
+          <div class="ads-bk-icon">📊</div>
+          <div class="ads-bk-label">Total</div>
+          <div class="ads-bk-val" id="ads-res-t">0</div>
+        </div>
+        <div class="ads-bk-item">
+          <div class="ads-bk-icon">⭐</div>
+          <div class="ads-bk-label">Nível</div>
+          <div class="ads-bk-val" id="ads-res-lvl">-</div>
+        </div>
+      </div>
+      <div class="ads-res-btns">
+        <button class="ads-btn-again" onclick="restartAdsQuiz()">🔄 Tentar novamente</button>
+        <button class="ads-btn-close" onclick="closeAdsQuiz()">Fechar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
+/* ============================================================
+   BANCO DE PERGUNTAS ADS — 8 perguntas exclusivas
+   ============================================================ */
+const adsQuestions = [
+  {
+    scenario: "Lojista confuso no chat",
+    text: "Um lojista diz: 'Coloquei dinheiro em ADS mas meu produto não aparece em nenhuma busca. Fui roubado?' Como você responde?",
+    context: "O cliente está irritado e desconfiante. Não sabe nada sobre como ADS funciona.",
+    options: [
+      { text: "Explica que ADS funciona por leilão: o anúncio aparece conforme o lance, relevância do produto e orçamento — e que o dinheiro só é cobrado quando há clique ou exibição.", correct: true },
+      { text: "Diz que ADS sempre funciona e pede para ele esperar mais.", correct: false },
+      { text: "Manda o link da central de ajuda para ele entender melhor.", correct: false },
+      { text: "Pergunta se ele tem nota fiscal do crédito inserido.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você validou a preocupação e explicou a lógica do leilão de forma simples e transparente. Isso constrói confiança.",
+    feedbackWrong: "Clientes irritados precisam de explicação clara e empática, não de respostas vagas ou burocracia. Explique o modelo de leilão do ADS.",
+    tip: "Use analogias simples: 'É como um leilão — quem oferece mais e tem produto relevante aparece na frente.' Isso torna o conceito acessível para qualquer lojista."
+  },
+  {
+    scenario: "Urgência competitiva",
+    text: "Lojista: 'Meu concorrente está aparecendo na frente de mim em TODOS os resultados. O que posso fazer agora, hoje?'",
+    context: "O lojista está em pânico e quer ação imediata.",
+    options: [
+      { text: "Falar para ele esperar porque ADS demora para funcionar.", correct: false },
+      { text: "Sugerir que ele aumente o lance por clique, revise as palavras-chave e verifique se o orçamento diário não está esgotando cedo.", correct: true },
+      { text: "Dizer que não há controle sobre o algoritmo.", correct: false },
+      { text: "Pedir print de tela antes de orientar qualquer coisa.", correct: false }
+    ],
+    feedbackCorrect: "Ótimo! Você agiu de forma consultiva com ações concretas e imediatas. O lojista sente que você é um aliado.",
+    feedbackWrong: "Respostas vagas ou que transferem responsabilidade frustram o lojista. Sempre entregue ao menos uma ação concreta que ele pode fazer agora.",
+    tip: "Sempre que puder, entregue UMA ação concreta e imediata. Isso diferencia um bom atendimento de um atendimento mediano."
+  },
+  {
+    scenario: "Expectativa vs. realidade",
+    text: "Lojista: 'Já gastei R$200 em ADS essa semana e só vendi 2 produtos. Isso é normal?'",
+    context: "O lojista não entende métricas de performance e acha que ADS deveria gerar venda automática.",
+    options: [
+      { text: "Diz que R$200 é pouco e ele precisa investir mais.", correct: false },
+      { text: "Explica que ADS gera visibilidade, não venda garantida, e que foto, preço e avaliações influenciam a conversão — e propõe analisar as métricas juntos.", correct: true },
+      { text: "Confirma que é normal e encerra o atendimento.", correct: false },
+      { text: "Recomenda desativar os anúncios e reconfigurar tudo.", correct: false }
+    ],
+    feedbackCorrect: "Excelente! Você educou o lojista sobre o papel do ADS e aproveitou para um atendimento consultivo.",
+    feedbackWrong: "O cliente precisa entender a diferença entre visibilidade e conversão. Sem essa explicação, ele ficará frustrado indefinidamente.",
+    tip: "Separe sempre visibilidade (ADS) de conversão (produto, preço, fotos). Isso educa o lojista e reduz reclamações futuras."
+  },
+  {
+    scenario: "Dúvida técnica: palavras-chave",
+    text: "Lojista: 'Devo usar palavras-chave amplas ou exatas no meu ADS? Qual a diferença na prática?'",
+    context: "O lojista está configurando um anúncio pela primeira vez e quer entender as opções.",
+    options: [
+      { text: "Diz que não faz diferença e que qualquer uma serve.", correct: false },
+      { text: "Explica que palavras amplas alcançam mais pessoas mas com menor precisão, enquanto exatas focam em quem busca exatamente aquele termo — e orienta a combinar as duas estratégias.", correct: true },
+      { text: "Recomenda usar só palavras exatas para economizar.", correct: false },
+      { text: "Sugere não usar palavras-chave e deixar o automático.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você deu uma explicação prática e orientou o lojista a usar a melhor combinação das duas estratégias.",
+    feedbackWrong: "Palavras amplas e exatas têm funções diferentes. Explicar isso corretamente ajuda o lojista a investir melhor o orçamento de ADS.",
+    tip: "Use a metáfora da pesca: 'Palavra ampla é rede de arrasto — pega mais mas traz misturado. Palavra exata é anzol — pesca quem você quer.' Simples e memorável."
+  },
+  {
+    scenario: "Orçamento esgotado cedo",
+    text: "Lojista: 'Meu orçamento diário de ADS acaba sempre antes das 10h da manhã. O que está acontecendo?'",
+    context: "O lojista não entende por que o orçamento se esgota tão rápido.",
+    options: [
+      { text: "Diz que é normal e que ele deveria aumentar o orçamento.", correct: false },
+      { text: "Explica que o orçamento pode estar baixo para a competitividade do nicho ou que o lance está alto demais — e sugere distribuir o orçamento ao longo do dia ou aumentá-lo com base no CPV atual.", correct: true },
+      { text: "Sugere pausar o ADS até o fim do mês.", correct: false },
+      { text: "Diz que é um bug da plataforma.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você diagnosticou as causas possíveis e deu orientações concretas para resolver o problema.",
+    feedbackWrong: "Dizer apenas 'aumente o orçamento' sem diagnóstico não ajuda o lojista. Analise as causas: lance alto demais ou nicho muito competitivo.",
+    tip: "Pergunte ao lojista o CPV (Custo por Visualização) atual antes de recomendar aumentar orçamento. Com esse dado, a recomendação fica muito mais precisa."
+  },
+  {
+    scenario: "Métricas confusas",
+    text: "Lojista: 'Tenho muitas impressões no ADS mas pouquíssimos cliques. O que está errado?'",
+    context: "O lojista não entende a relação entre impressões, CTR e conversão.",
+    options: [
+      { text: "Diz que impressões altas são ótimas e não há nada a corrigir.", correct: false },
+      { text: "Explica que CTR baixo pode indicar que a foto principal, título ou preço não estão atraentes suficientes para o público que está vendo o anúncio.", correct: true },
+      { text: "Recomenda aumentar o lance imediatamente.", correct: false },
+      { text: "Diz que é culpa do algoritmo da Shopee.", correct: false }
+    ],
+    feedbackCorrect: "Excelente diagnóstico! Impressão alta com CTR baixo é sinal claro de que a vitrine do produto precisa melhorar.",
+    feedbackWrong: "CTR baixo com muitas impressões aponta para um problema de atração visual, não de orçamento. A solução está na foto, título e preço.",
+    tip: "Ensine o lojista a equação: 'Impressão = vitrina. Clique = porta. Venda = caixa.' Se as pessoas veem mas não entram, a vitrine precisa melhorar."
+  },
+  {
+    scenario: "Produto sem resultado",
+    text: "Lojista: 'Estou anunciando com ADS há 2 semanas sem nenhuma venda. Devo desistir do ADS?'",
+    context: "O lojista está desanimado e considerando cancelar o investimento em ADS.",
+    options: [
+      { text: "Diz que sim, ADS não funciona para todos.", correct: false },
+      { text: "Antes de desistir, propõe revisar juntos: as fotos do produto, o preço em relação à concorrência, as avaliações e se as palavras-chave estão alinhadas ao que o comprador busca.", correct: true },
+      { text: "Pede para ele aumentar o orçamento por mais 2 semanas.", correct: false },
+      { text: "Sugere trocar de produto para anunciar.", correct: false }
+    ],
+    feedbackCorrect: "Muito bem! Você impediu uma desistência prematura e propôs uma análise estruturada. Isso é atendimento consultivo de alto nível.",
+    feedbackWrong: "ADS sem resultado geralmente indica problema na ficha do produto, não no ADS em si. Revisar os fundamentos antes de desistir é sempre o caminho.",
+    tip: "ADS potencializa o que já funciona — não conserta produto ruim. Se não há clique mesmo com impressão, o problema está na ficha. Se há clique mas não há venda, o problema está na página."
+  },
+  {
+    scenario: "Estratégia avançada",
+    text: "Lojista experiente: 'Quero usar ADS para lançar um produto novo sem nenhuma avaliação. Vale a pena ou é dinheiro perdido?'",
+    context: "O lojista já tem experiência com ADS e quer uma orientação estratégica.",
+    options: [
+      { text: "Diz que sem avaliação não vale investir em ADS.", correct: false },
+      { text: "Explica que ADS para lançamento pode funcionar, mas recomenda começar com orçamento menor, focar em palavras-chave de nicho, ter fotos e descrição impecáveis, e buscar as primeiras avaliações rapidamente via pós-venda.", correct: true },
+      { text: "Sugere esperar ter pelo menos 20 avaliações antes de ativar ADS.", correct: false },
+      { text: "Recomenda criar um segundo produto igual só para acumular avaliações.", correct: false }
+    ],
+    feedbackCorrect: "Perfeito! Você deu uma resposta estratégica e equilibrada, mostrando como usar ADS de forma inteligente mesmo no lançamento.",
+    feedbackWrong: "ADS no lançamento pode funcionar com a estratégia certa. Negar essa possibilidade é perder uma oportunidade de orientar bem o lojista.",
+    tip: "Para lançamentos, oriente: 'Comece pequeno para testar a receptividade. Com as primeiras vendas e avaliações, escale o investimento.' Isso reduz risco e aumenta a taxa de sucesso."
+  }
+];
+
+/* ============================================================
+   BANCO DE PERGUNTAS GERAL (quiz completo)
+   ============================================================ */
 const questions = [
-  // ===== ADS =====
   {
     topic: "📢 ADS",
     scenario: "Cliente confuso no chat",
@@ -662,8 +1211,6 @@ const questions = [
     feedbackWrong: "O cliente precisa entender a diferença entre visibilidade e conversão. Sem essa explicação, ele ficará frustrado indefinidamente.",
     tip: "Separe sempre visibilidade (ADS) de conversão (produto, preço, fotos). Isso educa o lojista e o ajuda a ter expectativas realistas — o que reduz reclamações futuras."
   },
-
-  // ===== PRECIFICAÇÃO =====
   {
     topic: "💰 Precificação",
     scenario: "Decisão sob pressão",
@@ -709,8 +1256,6 @@ const questions = [
     feedbackWrong: "Nem concordar cegamente nem contrariar sem base. Um bom assistente adiciona contexto e ajuda o lojista a tomar a melhor decisão.",
     tip: "Quando um lojista tem uma crença sobre estratégia, não bata de frente. Valide o que tem de verdade e acrescente o que falta: "Isso pode funcionar quando acompanhado de...""
   },
-
-  // ===== CENTRAL DE MARKETING =====
   {
     topic: "📣 Central de Marketing",
     scenario: "Cliente perdido na ferramenta",
@@ -749,15 +1294,13 @@ const questions = [
     options: [
       { text: "Confirma que há mesmo preferência por grandes lojistas.", correct: false },
       { text: "Nega qualquer critério de seleção.", correct: false },
-      { text: "Reconhece a frustração, explica que a curadoria de campanhas tem critérios como avaliação do produto, histórico de vendas e qualidade da ficha, e orienta como se preparar melhor para próximas campanhas.", correct: true },
+      { text: "Reconhece a frustração, explica que a curadoria tem critérios como avaliação do produto, histórico de vendas e qualidade da ficha, e orienta como se preparar melhor para próximas campanhas.", correct: true },
       { text: "Diz que ele deveria ter lido as regras antes de participar.", correct: false }
     ],
     feedbackCorrect: "Excelente! Você validou o sentimento, explicou os critérios com transparência e deu um caminho construtivo.",
     feedbackWrong: "Em situações emocionais, validar o sentimento vem primeiro. Só depois vem a explicação racional.",
     tip: "Fórmula para situações emocionais: 1) "Entendo sua frustração..." 2) Explique os critérios objetivos 3) Ofereça um próximo passo positivo. Essa sequência transforma reclamação em oportunidade."
   },
-
-  // ===== AFILIADOS =====
   {
     topic: "🤝 Afiliados",
     scenario: "Dúvida básica com desconfiança",
@@ -780,13 +1323,13 @@ const questions = [
     context: "O afiliado está preocupado com perda de comissão. É uma situação financeira sensível.",
     options: [
       { text: "Diz que ele deve ter contado errado.", correct: false },
-      { text: "Valida a preocupação, explica que podem existir cancelamentos, devoluções ou compras feitas sem cookie rastreado, e orienta como abrir um chamado com o período e os pedidos específicos para investigação.", correct: true },
+      { text: "Valida a preocupação, explica que podem existir cancelamentos, devoluções ou compras feitas sem cookie rastreado, e orienta como abrir um chamado com o período e os pedidos específicos.", correct: true },
       { text: "Confirma que o sistema tem falhas e vai pagar assim que investigar.", correct: false },
       { text: "Pede para ele mandar print de todas as 30 vendas para verificar.", correct: false }
     ],
     feedbackCorrect: "Perfeito! Você não descartou a preocupação, mas também não fez promessas indevidas. Deu o processo correto.",
     feedbackWrong: "Nunca descarte uma divergência financeira como erro do cliente. Sempre valide e direcione para investigação formal.",
-    tip: "Em questões financeiras, nunca use "você deve ter contado errado." Prefira: "Vamos investigar juntos." Isso mantém a confiança mesmo quando o resultado não for o esperado pelo afiliado."
+    tip: "Em questões financeiras, nunca use "você deve ter contado errado." Prefira: "Vamos investigar juntos." Isso mantém a confiança mesmo quando o resultado não for o esperado."
   },
   {
     topic: "🤝 Afiliados",
@@ -805,15 +1348,141 @@ const questions = [
   }
 ];
 
-let currentQ = 0;
-let correct = 0;
-let wrong = 0;
-let shuffled = [];
+/* ============================================================
+   ESTADO GLOBAL
+   ============================================================ */
+let currentQ = 0, correct = 0, wrong = 0, shuffled = [];
+let adsQ = 0, adsCorrect = 0, adsWrong = 0, adsShuffled = [];
 
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+/* ============================================================
+   ADS MODAL
+   ============================================================ */
+function openAdsQuiz() {
+  adsQ = 0; adsCorrect = 0; adsWrong = 0;
+  adsShuffled = shuffle(adsQuestions);
+  document.getElementById('ads-result').classList.remove('show');
+  document.getElementById('ads-quiz-area').style.display = 'block';
+  document.getElementById('ads-correct-count').textContent = '0';
+  document.getElementById('ads-wrong-count').textContent = '0';
+  document.getElementById('ads-modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  adsLoadQuestion();
 }
 
+function closeAdsQuiz() {
+  document.getElementById('ads-modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('ads-modal-overlay')) closeAdsQuiz();
+}
+
+function adsLoadQuestion() {
+  const q = adsShuffled[adsQ];
+  document.getElementById('ads-prog-label').textContent = `Pergunta ${adsQ + 1} de ${adsShuffled.length}`;
+  document.getElementById('ads-prog-fill').style.width = `${(adsQ / adsShuffled.length) * 100}%`;
+  document.getElementById('ads-scenario').textContent = `💬 ${q.scenario}`;
+  document.getElementById('ads-q-text').textContent = q.text;
+  document.getElementById('ads-q-context').textContent = q.context;
+
+  const grid = document.getElementById('ads-options');
+  grid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  const opts = shuffle(q.options);
+
+  opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ads-opt-btn';
+    btn.innerHTML = `<span class="ads-opt-letter">${letters[i]}</span><span>${opt.text}</span>`;
+    btn.onclick = () => adsSelectOption(btn, opt.correct, q, opts);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('ads-feedback').className = 'ads-feedback';
+  document.getElementById('ads-tip').className = 'ads-tip';
+  document.getElementById('ads-btn-next').className = 'ads-btn-next';
+
+  // scroll modal to top
+  document.getElementById('ads-modal').scrollTop = 0;
+}
+
+function adsSelectOption(btn, isCorrect, q, opts) {
+  const allBtns = document.querySelectorAll('.ads-opt-btn');
+  allBtns.forEach(b => {
+    b.disabled = true;
+    const txt = b.querySelector('span:last-child').textContent;
+    const match = opts.find(o => o.text === txt);
+    if (b === btn) b.classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect && match && match.correct) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('ads-feedback');
+  if (isCorrect) {
+    adsCorrect++;
+    fb.className = 'ads-feedback fb-correct show';
+    document.getElementById('ads-fb-title').textContent = '✅ Resposta correta!';
+    document.getElementById('ads-fb-text').textContent = q.feedbackCorrect;
+  } else {
+    adsWrong++;
+    fb.className = 'ads-feedback fb-wrong show';
+    document.getElementById('ads-fb-title').textContent = '❌ Não era essa!';
+    document.getElementById('ads-fb-text').textContent = q.feedbackWrong;
+  }
+
+  document.getElementById('ads-tip-text').textContent = q.tip;
+  document.getElementById('ads-tip').className = 'ads-tip show';
+  document.getElementById('ads-btn-next').className = 'ads-btn-next show';
+  document.getElementById('ads-correct-count').textContent = adsCorrect;
+  document.getElementById('ads-wrong-count').textContent = adsWrong;
+}
+
+function adsNextQuestion() {
+  adsQ++;
+  if (adsQ >= adsShuffled.length) {
+    adsShowResult();
+  } else {
+    adsLoadQuestion();
+  }
+}
+
+function adsShowResult() {
+  document.getElementById('ads-quiz-area').style.display = 'none';
+  const pct = Math.round((adsCorrect / adsShuffled.length) * 100);
+  document.getElementById('ads-res-pct').textContent = `${pct}%`;
+  document.getElementById('ads-res-c').textContent = adsCorrect;
+  document.getElementById('ads-res-e').textContent = adsWrong;
+  document.getElementById('ads-res-t').textContent = adsShuffled.length;
+
+  let emoji, title, sub, level;
+  if (pct >= 88)      { emoji='🏆'; title='Expert em ADS!';      sub='Você domina ADS na Shopee. Conhecimento de alto nível!';          level='Expert'; }
+  else if (pct >= 63) { emoji='🎯'; title='Muito bem!';           sub='Sólido conhecimento. Pratique mais para chegar ao topo.';         level='Avançado'; }
+  else if (pct >= 38) { emoji='📈'; title='Bom progresso!';       sub='Você está no caminho certo. Revise os conceitos de lance e CTR.'; level='Intermediário'; }
+  else                { emoji='💪'; title='Continue treinando!';  sub='Revise como funciona o leilão de ADS e tente novamente.';         level='Iniciante'; }
+
+  document.getElementById('ads-res-emoji').textContent = emoji;
+  document.getElementById('ads-res-title').textContent = title;
+  document.getElementById('ads-res-sub').textContent = sub;
+  document.getElementById('ads-res-lvl').textContent = level;
+  document.getElementById('ads-result').classList.add('show');
+  document.getElementById('ads-modal').scrollTop = 0;
+}
+
+function restartAdsQuiz() {
+  document.getElementById('ads-result').classList.remove('show');
+  document.getElementById('ads-quiz-area').style.display = 'block';
+  adsQ = 0; adsCorrect = 0; adsWrong = 0;
+  adsShuffled = shuffle(adsQuestions);
+  document.getElementById('ads-correct-count').textContent = '0';
+  document.getElementById('ads-wrong-count').textContent = '0';
+  adsLoadQuestion();
+}
+
+/* ============================================================
+   QUIZ GERAL
+   ============================================================ */
 function startGame() {
   shuffled = shuffle(questions);
   currentQ = 0; correct = 0; wrong = 0;
@@ -841,7 +1510,7 @@ function loadQuestion() {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt.text}</span>`;
-    btn.onclick = () => selectOption(btn, opt.correct, q);
+    btn.onclick = () => selectOption(btn, opt.correct, q, opts);
     grid.appendChild(btn);
   });
 
@@ -850,38 +1519,27 @@ function loadQuestion() {
   document.getElementById('btn-next').className = 'btn-next';
 }
 
-function selectOption(btn, isCorrect, q) {
+function selectOption(btn, isCorrect, q, opts) {
   const allBtns = document.querySelectorAll('.option-btn');
   allBtns.forEach(b => {
     b.disabled = true;
-    if (b === btn) {
-      b.classList.add(isCorrect ? 'correct' : 'wrong');
-    }
+    const txt = b.querySelector('span:last-child').textContent;
+    const match = opts.find(o => o.text === txt);
+    if (b === btn) b.classList.add(isCorrect ? 'correct' : 'wrong');
+    if (!isCorrect && match && match.correct) b.classList.add('correct');
   });
 
-  // Mark correct answer if wrong
-  if (!isCorrect) {
-    allBtns.forEach(b => {
-      const text = b.querySelector('span:last-child').textContent;
-      const match = q.options.find(o => o.text === text && o.correct);
-      if (match) b.classList.add('correct');
-    });
-  }
-
   const fb = document.getElementById('feedback-box');
-  const fbTitle = document.getElementById('feedback-title');
-  const fbText = document.getElementById('feedback-text');
-
   if (isCorrect) {
     correct++;
     fb.className = 'feedback-box correct-fb show';
-    fbTitle.textContent = '✅ Resposta correta!';
-    fbText.textContent = q.feedbackCorrect;
+    document.getElementById('feedback-title').textContent = '✅ Resposta correta!';
+    document.getElementById('feedback-text').textContent = q.feedbackCorrect;
   } else {
     wrong++;
     fb.className = 'feedback-box wrong-fb show';
-    fbTitle.textContent = '❌ Não era essa!';
-    fbText.textContent = q.feedbackWrong;
+    document.getElementById('feedback-title').textContent = '❌ Não era essa!';
+    document.getElementById('feedback-text').textContent = q.feedbackWrong;
   }
 
   document.getElementById('tip-text').textContent = q.tip;
@@ -892,18 +1550,13 @@ function selectOption(btn, isCorrect, q) {
 
 function nextQuestion() {
   currentQ++;
-  if (currentQ >= shuffled.length) {
-    showResult();
-  } else {
-    loadQuestion();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  if (currentQ >= shuffled.length) showResult();
+  else { loadQuestion(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 }
 
 function showResult() {
   document.getElementById('screen-question').style.display = 'none';
   document.getElementById('screen-result').style.display = 'block';
-
   const pct = Math.round((correct / shuffled.length) * 100);
   document.getElementById('result-score').textContent = `${pct}%`;
   document.getElementById('res-correct').textContent = correct;
@@ -911,10 +1564,10 @@ function showResult() {
   document.getElementById('res-total').textContent = shuffled.length;
 
   let emoji, title, sub, level;
-  if (pct >= 90) { emoji='🏆'; title='Especialista Shopee!'; sub='Comunicação impecável. Você está pronto para qualquer cliente!'; level='Expert'; }
-  else if (pct >= 70) { emoji='🎯'; title='Muito bem!'; sub='Você domina os conceitos. Ajuste alguns pontos e será imbatível.'; level='Avançado'; }
-  else if (pct >= 50) { emoji='📈'; title='Bom progresso!'; sub='Você está no caminho certo. Continue praticando!'; level='Intermediário'; }
-  else { emoji='💪'; title='Continue treinando!'; sub='Cada tentativa é aprendizado. Revise os temas e tente novamente.'; level='Iniciante'; }
+  if (pct >= 90)      { emoji='🏆'; title='Especialista Shopee!'; sub='Comunicação impecável. Você está pronto para qualquer cliente!'; level='Expert'; }
+  else if (pct >= 70) { emoji='🎯'; title='Muito bem!';           sub='Você domina os conceitos. Ajuste alguns pontos e será imbatível.'; level='Avançado'; }
+  else if (pct >= 50) { emoji='📈'; title='Bom progresso!';       sub='Você está no caminho certo. Continue praticando!'; level='Intermediário'; }
+  else                { emoji='💪'; title='Continue treinando!';  sub='Cada tentativa é aprendizado. Revise os temas e tente novamente.'; level='Iniciante'; }
 
   document.getElementById('result-emoji').textContent = emoji;
   document.getElementById('result-title').textContent = title;
